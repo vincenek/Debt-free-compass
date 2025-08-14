@@ -773,7 +773,6 @@
                     <div class="form-group">
                         <label for="signupConfirm">Confirm Password</label>
                         <input type="password" id="signupConfirm" minlength="6" required placeholder="Confirm your password">
-                        <div id="passwordMatchError" style="color: var(--danger); font-size: 0.85rem; margin-top: 5px; display: none;">Passwords do not match</div>
                     </div>
                     <button type="submit" class="btn">Sign Up</button>
                 </form>
@@ -1000,7 +999,6 @@
             googleLoginBtn: document.getElementById('googleLoginBtn'),
             showLoginLink: document.getElementById('showLoginLink'),
             showSignupLink: document.getElementById('showSignupLink'),
-            passwordMatchError: document.getElementById('passwordMatchError'),
             
             // App View
             appView: document.getElementById('appView'),
@@ -1086,7 +1084,6 @@
         function showSignupView() {
             elements.signupView.style.display = 'flex';
             elements.loginView.style.display = 'none';
-            elements.passwordMatchError.style.display = 'none';
         }
 
         // Show login view
@@ -1109,18 +1106,6 @@
                 showSignupView();
             });
             
-            // Password confirmation validation
-            elements.signupConfirm.addEventListener('input', () => {
-                const password = elements.signupPassword.value;
-                const confirm = elements.signupConfirm.value;
-                
-                if (password !== confirm && confirm.length >= 6) {
-                    elements.passwordMatchError.style.display = 'block';
-                } else {
-                    elements.passwordMatchError.style.display = 'none';
-                }
-            });
-            
             // Auth forms
             elements.signupForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -1130,7 +1115,6 @@
                 
                 // Form validation
                 if (password !== confirm) {
-                    elements.passwordMatchError.style.display = 'block';
                     showToast('Passwords do not match', 'error');
                     return;
                 }
@@ -1191,11 +1175,9 @@
         function signUpWithEmail(email, password) {
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Reset form and show success message
+                    // Clear form and show success message
                     elements.signupForm.reset();
-                    elements.passwordMatchError.style.display = 'none';
                     showToast('Account created successfully!', 'success');
-                    
                     if (analytics) {
                         analytics.logEvent('sign_up', { method: 'email' });
                     }
@@ -1210,10 +1192,9 @@
         function signInWithEmail(email, password) {
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Reset form and show success message
+                    // Clear form and show success message
                     elements.loginForm.reset();
                     showToast('Login successful!', 'success');
-                    
                     if (analytics) {
                         analytics.logEvent('login', { method: 'email' });
                     }
