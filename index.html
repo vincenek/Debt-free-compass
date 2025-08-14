@@ -49,6 +49,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 16px;
+            width: 100%;
         }
 
         header {
@@ -67,6 +68,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
+            padding: 0 16px;
         }
 
         .logo {
@@ -158,6 +160,7 @@
             align-items: center;
             min-height: calc(100vh - 70px);
             padding: 20px;
+            width: 100%;
         }
 
         .auth-card {
@@ -167,6 +170,7 @@
             padding: 25px;
             width: 100%;
             max-width: 450px;
+            box-sizing: border-box;
         }
 
         .auth-header {
@@ -204,6 +208,7 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
+            box-sizing: border-box;
         }
 
         .auth-form input:focus {
@@ -317,6 +322,7 @@
             padding: 20px;
             margin-bottom: 20px;
             transition: var(--transition);
+            box-sizing: border-box;
         }
 
         .card:hover {
@@ -359,6 +365,7 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
+            box-sizing: border-box;
         }
 
         input:focus, select:focus {
@@ -404,6 +411,8 @@
             display: flex;
             justify-content: space-between;
             font-size: 0.85rem;
+            flex-wrap: wrap;
+            gap: 5px;
         }
 
         .loan-body {
@@ -456,6 +465,7 @@
             justify-content: space-between;
             padding: 0 15px 15px;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .chart-container {
@@ -471,6 +481,7 @@
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             padding: 20px;
+            box-sizing: border-box;
         }
 
         .privacy-container h1 {
@@ -519,6 +530,7 @@
         .footer-links {
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
         .footer-links a {
@@ -535,8 +547,8 @@
         .toast {
             position: fixed;
             top: 20px;
-            right: 20px;
-            left: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-150%);
             padding: 15px 20px;
             background: white;
             border-radius: var(--border-radius);
@@ -544,14 +556,14 @@
             color: var(--dark);
             font-weight: 600;
             z-index: 1000;
-            transform: translateY(-150%);
             transition: transform 0.3s ease;
-            max-width: 500px;
-            margin: 0 auto;
+            max-width: 90%;
+            text-align: center;
+            width: auto;
         }
 
         .toast.show {
-            transform: translateY(0);
+            transform: translateX(-50%) translateY(0);
         }
 
         .toast.success {
@@ -634,6 +646,7 @@
             .header-content {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 10px;
             }
             
             .auth-buttons, .user-info {
@@ -660,6 +673,7 @@
             
             .loan-footer {
                 flex-direction: column;
+                gap: 8px;
             }
             
             .loan-footer .btn {
@@ -669,6 +683,7 @@
             .footer-content {
                 flex-direction: column;
                 text-align: center;
+                gap: 10px;
             }
             
             .footer-links {
@@ -677,6 +692,7 @@
             
             .payment-row {
                 grid-template-columns: 1fr;
+                gap: 8px;
             }
             
             .payment-input input {
@@ -707,6 +723,10 @@
                 display: flex;
                 justify-content: space-between;
             }
+            
+            .privacy-container {
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -716,20 +736,18 @@
 
     <!-- Header with Logo and Auth Buttons -->
     <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <div class="logo-icon">DF</div>
-                    <div class="logo-text">DebtFree Compass</div>
-                </div>
-                <div id="authButtons" class="auth-buttons">
-                    <button id="loginBtn" class="btn btn-outline">Log In</button>
-                    <button id="signupBtn" class="btn">Sign Up</button>
-                </div>
-                <div id="userSection" style="display: none;" class="user-info">
-                    <div id="userAvatar" class="user-avatar"></div>
-                    <button id="logoutBtn" class="btn btn-sm btn-outline">Log Out</button>
-                </div>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">DF</div>
+                <div class="logo-text">DebtFree Compass</div>
+            </div>
+            <div id="authButtons" class="auth-buttons">
+                <button id="loginBtn" class="btn btn-outline">Log In</button>
+                <button id="signupBtn" class="btn">Sign Up</button>
+            </div>
+            <div id="userSection" style="display: none;" class="user-info">
+                <div id="userAvatar" class="user-avatar"></div>
+                <button id="logoutBtn" class="btn btn-sm btn-outline">Log Out</button>
             </div>
         </div>
     </header>
@@ -1026,7 +1044,9 @@
                     state.currentUser = user;
                     showAppView();
                     loadUserData();
-                    analytics.logEvent('login', { method: user.providerData[0].providerId });
+                    if (analytics) {
+                        analytics.logEvent('login', { method: user.providerData[0].providerId });
+                    }
                 } else {
                     // User is signed out
                     state.currentUser = null;
@@ -1055,7 +1075,7 @@
             if (state.currentUser.photoURL) {
                 elements.userAvatar.innerHTML = `<img src="${state.currentUser.photoURL}" alt="User Avatar">`;
             } else {
-                const initials = state.currentUser.email.charAt(0).toUpperCase();
+                const initials = state.currentUser.email ? state.currentUser.email.charAt(0).toUpperCase() : 'U';
                 elements.userAvatar.textContent = initials;
             }
         }
@@ -1156,10 +1176,13 @@
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     showToast('Account created successfully!', 'success');
-                    analytics.logEvent('sign_up', { method: 'email' });
+                    if (analytics) {
+                        analytics.logEvent('sign_up', { method: 'email' });
+                    }
                 })
                 .catch((error) => {
                     showToast(error.message, 'error');
+                    console.error('Sign up error:', error);
                 });
         }
 
@@ -1168,10 +1191,13 @@
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     showToast('Login successful!', 'success');
-                    analytics.logEvent('login', { method: 'email' });
+                    if (analytics) {
+                        analytics.logEvent('login', { method: 'email' });
+                    }
                 })
                 .catch((error) => {
                     showToast(error.message, 'error');
+                    console.error('Sign in error:', error);
                 });
         }
 
@@ -1181,10 +1207,13 @@
             auth.signInWithPopup(provider)
                 .then((result) => {
                     showToast('Signed in with Google', 'success');
-                    analytics.logEvent('login', { method: 'google' });
+                    if (analytics) {
+                        analytics.logEvent('login', { method: 'google' });
+                    }
                 })
                 .catch((error) => {
                     showToast(error.message, 'error');
+                    console.error('Google sign in error:', error);
                 });
         }
 
@@ -1213,7 +1242,9 @@
                         state.loans.push({ id: doc.id, ...doc.data() });
                     });
                     renderLoans();
-                    analytics.logEvent('loans_loaded', { count: state.loans.length });
+                    if (analytics) {
+                        analytics.logEvent('loans_loaded', { count: state.loans.length });
+                    }
                 })
                 .catch((error) => {
                     showToast('Error loading loans: ' + error.message, 'error');
@@ -1263,7 +1294,9 @@
                     renderLoans();
                     elements.loanForm.reset();
                     showToast('Loan added successfully!', 'success');
-                    analytics.logEvent('add_loan', { name: loan.name, amount: loan.balance });
+                    if (analytics) {
+                        analytics.logEvent('add_loan', { name: loan.name, amount: loan.balance });
+                    }
                 })
                 .catch((error) => {
                     showToast('Error adding loan: ' + error.message, 'error');
@@ -1411,7 +1444,9 @@
                     state.payments.push(payment);
                     renderPaymentHistory();
                     showToast('Payment recorded!', 'success');
-                    analytics.logEvent('record_payment', { loanId: loanId, amount: amount });
+                    if (analytics) {
+                        analytics.logEvent('record_payment', { loanId: loanId, amount: amount });
+                    }
                 })
                 .catch((error) => {
                     showToast('Error recording payment: ' + error.message, 'error');
@@ -1561,7 +1596,9 @@
                     state.loans = state.loans.filter(loan => loan.id !== loanId);
                     renderLoans();
                     showToast('Loan removed successfully', 'success');
-                    analytics.logEvent('remove_loan', { loanId: loanId });
+                    if (analytics) {
+                        analytics.logEvent('remove_loan', { loanId: loanId });
+                    }
                 })
                 .catch((error) => {
                     showToast('Error removing loan: ' + error.message, 'error');
@@ -1586,7 +1623,9 @@
                     state.loans = [];
                     renderLoans();
                     showToast('All loans have been reset', 'success');
-                    analytics.logEvent('reset_loans');
+                    if (analytics) {
+                        analytics.logEvent('reset_loans');
+                    }
                 })
                 .catch((error) => {
                     showToast('Error resetting loans: ' + error.message, 'error');
