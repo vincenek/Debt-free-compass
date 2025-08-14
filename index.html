@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DebtFree Compass - Loan Management</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -38,11 +36,11 @@
         }
 
         body {
-            background-color: #f1f5f9;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             color: var(--dark);
             line-height: 1.6;
-            overflow-x: hidden;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .container {
@@ -104,7 +102,9 @@
         }
 
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             padding: 10px 20px;
             background: var(--primary);
             color: white;
@@ -116,10 +116,12 @@
             text-align: center;
             font-size: 0.9rem;
             white-space: nowrap;
+            gap: 8px;
         }
 
         .btn:hover {
             background: var(--primary-dark);
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
@@ -167,10 +169,11 @@
             background: white;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow-lg);
-            padding: 25px;
+            padding: 30px;
             width: 100%;
             max-width: 450px;
             box-sizing: border-box;
+            animation: fadeIn 0.5s ease;
         }
 
         .auth-header {
@@ -181,16 +184,21 @@
         .auth-header h2 {
             margin-bottom: 10px;
             color: var(--dark);
-            font-size: 1.5rem;
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .auth-header p {
             color: var(--gray);
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         .auth-form .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            position: relative;
         }
 
         .auth-form label {
@@ -203,12 +211,20 @@
 
         .auth-form input {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
+            padding-left: 40px;
             border: 1px solid var(--light-gray);
             border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
             box-sizing: border-box;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 40px;
+            color: var(--gray);
         }
 
         .auth-form input:focus {
@@ -219,9 +235,10 @@
 
         .auth-form .btn {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             margin-top: 10px;
             font-size: 1rem;
+            font-weight: 700;
         }
 
         .auth-footer {
@@ -235,12 +252,17 @@
             color: var(--primary);
             text-decoration: none;
             font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
         }
 
         .divider {
             display: flex;
             align-items: center;
-            margin: 20px 0;
+            margin: 25px 0;
         }
 
         .divider::before,
@@ -259,6 +281,7 @@
         /* Main App Styles */
         .app-view {
             display: none;
+            animation: fadeIn 0.5s ease;
         }
 
         .tabs {
@@ -319,40 +342,41 @@
             background: white;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
             transition: var(--transition);
             box-sizing: border-box;
         }
 
         .card:hover {
             box-shadow: var(--box-shadow-lg);
+            transform: translateY(-5px);
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 1px solid var(--light-gray);
             flex-wrap: wrap;
             gap: 10px;
         }
 
         .card-title {
-            font-size: 1.15rem;
+            font-size: 1.4rem;
             font-weight: 700;
             color: var(--dark);
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 600;
             color: var(--dark);
             font-size: 0.95rem;
@@ -360,7 +384,7 @@
 
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: 1px solid var(--light-gray);
             border-radius: 8px;
             font-size: 1rem;
@@ -376,8 +400,8 @@
 
         .loans-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
             margin-top: 20px;
         }
 
@@ -391,86 +415,92 @@
         }
 
         .loan-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-5px);
             box-shadow: var(--box-shadow-lg);
         }
 
         .loan-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 15px;
+            padding: 20px;
         }
 
         .loan-name {
-            font-size: 1.15rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
 
         .loan-details {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             flex-wrap: wrap;
             gap: 5px;
         }
 
         .loan-body {
-            padding: 15px;
+            padding: 20px;
         }
 
         .loan-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .stat {
             text-align: center;
-            padding: 10px;
+            padding: 12px;
             background: var(--light);
             border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .stat:hover {
+            transform: scale(1.03);
+            box-shadow: var(--box-shadow);
         }
 
         .stat-label {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: var(--gray);
             text-transform: uppercase;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .stat-value {
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
 
         .progress-bar {
-            height: 8px;
+            height: 10px;
             background: var(--light-gray);
-            border-radius: 4px;
+            border-radius: 5px;
             overflow: hidden;
-            margin: 15px 0;
+            margin: 20px 0;
         }
 
         .progress {
             height: 100%;
             background: var(--secondary);
-            border-radius: 4px;
+            border-radius: 5px;
             transition: width 0.5s ease;
         }
 
         .loan-footer {
             display: flex;
             justify-content: space-between;
-            padding: 0 15px 15px;
+            padding: 0 20px 20px;
             gap: 10px;
             flex-wrap: wrap;
         }
 
         .chart-container {
-            height: 180px;
-            margin: 15px 0;
+            height: 200px;
+            margin: 20px 0;
         }
 
         /* Privacy Policy */
@@ -480,43 +510,43 @@
             background: white;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            padding: 20px;
+            padding: 25px;
             box-sizing: border-box;
         }
 
         .privacy-container h1 {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: var(--primary);
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
 
         .privacy-container h2 {
-            margin: 20px 0 12px;
+            margin: 25px 0 15px;
             color: var(--primary);
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
 
         .privacy-container p {
-            margin-bottom: 12px;
-            line-height: 1.6;
-            font-size: 0.95rem;
+            margin-bottom: 15px;
+            line-height: 1.7;
+            font-size: 1rem;
         }
 
         .privacy-container ul {
-            margin: 12px 0 12px 20px;
+            margin: 15px 0 15px 25px;
         }
 
         .privacy-container li {
-            margin-bottom: 8px;
-            font-size: 0.95rem;
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
 
         /* Footer */
         footer {
             background: var(--dark);
             color: white;
-            padding: 25px 0;
-            margin-top: 40px;
+            padding: 30px 0;
+            margin-top: 50px;
         }
 
         .footer-content {
@@ -529,17 +559,19 @@
 
         .footer-links {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             flex-wrap: wrap;
         }
 
         .footer-links a {
             color: white;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            transition: var(--transition);
         }
 
         .footer-links a:hover {
+            color: var(--secondary);
             text-decoration: underline;
         }
 
@@ -549,7 +581,7 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%) translateY(-150%);
-            padding: 15px 20px;
+            padding: 16px 24px;
             background: white;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow-lg);
@@ -560,6 +592,9 @@
             max-width: 90%;
             text-align: center;
             width: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .toast.show {
@@ -582,13 +617,13 @@
         .user-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
         }
 
         .user-avatar {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: var(--light);
             display: flex;
@@ -598,6 +633,7 @@
             color: var(--primary);
             overflow: hidden;
             flex-shrink: 0;
+            border: 2px solid white;
         }
 
         .user-avatar img {
@@ -615,30 +651,32 @@
         }
 
         .payment-form h4 {
-            margin-bottom: 10px;
-            font-size: 1rem;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
         }
 
         .payment-row {
             display: grid;
             grid-template-columns: 1fr auto;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
         }
 
         .payment-input {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .payment-input span {
             font-weight: 600;
+            font-size: 1.1rem;
         }
 
         .payment-input input {
             width: 100%;
-            max-width: 120px;
+            max-width: 140px;
+            padding: 12px;
         }
 
         /* Responsive Design */
@@ -707,6 +745,7 @@
             
             .auth-form input {
                 padding: 12px;
+                padding-left: 36px;
             }
             
             .btn {
@@ -728,11 +767,39 @@
                 padding: 15px;
             }
         }
+        
+        /* Loading spinner */
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Password visibility toggle */
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 40px;
+            cursor: pointer;
+            color: var(--gray);
+        }
     </style>
 </head>
 <body>
     <!-- Toast notifications -->
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span>Successfully logged in!</span>
+    </div>
 
     <!-- Header with Logo and Auth Buttons -->
     <header>
@@ -742,12 +809,18 @@
                 <div class="logo-text">DebtFree Compass</div>
             </div>
             <div id="authButtons" class="auth-buttons">
-                <button id="loginBtn" class="btn btn-outline">Log In</button>
-                <button id="signupBtn" class="btn">Sign Up</button>
+                <button id="loginBtn" class="btn btn-outline">
+                    <i class="fas fa-sign-in-alt"></i>Log In
+                </button>
+                <button id="signupBtn" class="btn">
+                    <i class="fas fa-user-plus"></i>Sign Up
+                </button>
             </div>
             <div id="userSection" style="display: none;" class="user-info">
                 <div id="userAvatar" class="user-avatar"></div>
-                <button id="logoutBtn" class="btn btn-sm btn-outline">Log Out</button>
+                <button id="logoutBtn" class="btn btn-sm btn-outline">
+                    <i class="fas fa-sign-out-alt"></i>Log Out
+                </button>
             </div>
         </div>
     </header>
@@ -764,18 +837,26 @@
                 <form id="signupForm" class="auth-form">
                     <div class="form-group">
                         <label for="signupEmail">Email</label>
+                        <i class="fas fa-envelope input-icon"></i>
                         <input type="email" id="signupEmail" required placeholder="Enter your email">
                     </div>
                     <div class="form-group">
                         <label for="signupPassword">Password (min 6 characters)</label>
+                        <i class="fas fa-lock input-icon"></i>
                         <input type="password" id="signupPassword" minlength="6" required placeholder="Create a password">
+                        <i class="fas fa-eye password-toggle" id="toggleSignupPassword"></i>
                     </div>
                     <div class="form-group">
                         <label for="signupConfirm">Confirm Password</label>
+                        <i class="fas fa-lock input-icon"></i>
                         <input type="password" id="signupConfirm" minlength="6" required placeholder="Confirm your password">
+                        <i class="fas fa-eye password-toggle" id="toggleSignupConfirm"></i>
                         <div id="passwordMatchError" style="color: var(--danger); font-size: 0.85rem; margin-top: 5px; display: none;">Passwords do not match</div>
                     </div>
-                    <button type="submit" class="btn">Sign Up</button>
+                    <button type="submit" class="btn">
+                        <span id="signupText">Sign Up</span>
+                        <div class="spinner" id="signupSpinner"></div>
+                    </button>
                 </form>
                 
                 <div class="divider"><span>or</span></div>
@@ -806,13 +887,19 @@
                 <form id="loginForm" class="auth-form">
                     <div class="form-group">
                         <label for="loginEmail">Email</label>
+                        <i class="fas fa-envelope input-icon"></i>
                         <input type="email" id="loginEmail" required placeholder="Enter your email">
                     </div>
                     <div class="form-group">
                         <label for="loginPassword">Password</label>
+                        <i class="fas fa-lock input-icon"></i>
                         <input type="password" id="loginPassword" required placeholder="Enter your password">
+                        <i class="fas fa-eye password-toggle" id="toggleLoginPassword"></i>
                     </div>
-                    <button type="submit" class="btn">Log In</button>
+                    <button type="submit" class="btn">
+                        <span id="loginText">Log In</span>
+                        <div class="spinner" id="loginSpinner"></div>
+                    </button>
                 </form>
                 
                 <div class="divider"><span>or</span></div>
@@ -896,7 +983,13 @@
                     </div>
                     
                     <div id="loansContainer" class="loans-grid">
-                        <!-- Loan cards will be dynamically inserted here -->
+                        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                            <h3>Welcome to DebtFree Compass!</h3>
+                            <p>Add your first loan to get started on your journey to financial freedom.</p>
+                            <div style="margin-top: 20px; font-size: 4rem; color: var(--secondary);">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -909,7 +1002,13 @@
                     </div>
                     
                     <div id="historyContainer">
-                        <!-- Payment history will be inserted here -->
+                        <div class="card" style="text-align: center; padding: 40px;">
+                            <h3>No Payments Recorded Yet</h3>
+                            <p>Make your first payment to see it appear here.</p>
+                            <div style="margin-top: 20px; font-size: 4rem; color: var(--primary);">
+                                <i class="fas fa-history"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -986,7 +1085,6 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const analytics = firebase.analytics();
 
         // DOM Elements
         const elements = {
@@ -1022,7 +1120,18 @@
             tabContents: document.querySelectorAll('.tab-content'),
             
             // Toast
-            toast: document.getElementById('toast')
+            toast: document.getElementById('toast'),
+            
+            // Spinners
+            signupSpinner: document.getElementById('signupSpinner'),
+            loginSpinner: document.getElementById('loginSpinner'),
+            signupText: document.getElementById('signupText'),
+            loginText: document.getElementById('loginText'),
+            
+            // Password toggles
+            toggleSignupPassword: document.getElementById('toggleSignupPassword'),
+            toggleSignupConfirm: document.getElementById('toggleSignupConfirm'),
+            toggleLoginPassword: document.getElementById('toggleLoginPassword')
         };
 
         // App State
@@ -1045,9 +1154,14 @@
                     // User is signed in
                     state.currentUser = user;
                     showAppView();
-                    loadUserData();
-                    if (analytics) {
-                        analytics.logEvent('login', { method: user.providerData[0].providerId });
+                    showToast(`Welcome back, ${user.email || 'User'}!`, 'success');
+                    
+                    // Set up user avatar
+                    if (user.photoURL) {
+                        elements.userAvatar.innerHTML = `<img src="${user.photoURL}" alt="User Avatar">`;
+                    } else {
+                        const initials = user.email ? user.email.charAt(0).toUpperCase() : 'U';
+                        elements.userAvatar.textContent = initials;
                     }
                 } else {
                     // User is signed out
@@ -1072,14 +1186,6 @@
             elements.appView.style.display = 'block';
             elements.authButtons.style.display = 'none';
             elements.userSection.style.display = 'flex';
-            
-            // Set up user avatar
-            if (state.currentUser.photoURL) {
-                elements.userAvatar.innerHTML = `<img src="${state.currentUser.photoURL}" alt="User Avatar">`;
-            } else {
-                const initials = state.currentUser.email ? state.currentUser.email.charAt(0).toUpperCase() : 'U';
-                elements.userAvatar.textContent = initials;
-            }
         }
 
         // Show signup view
@@ -1087,12 +1193,14 @@
             elements.signupView.style.display = 'flex';
             elements.loginView.style.display = 'none';
             elements.passwordMatchError.style.display = 'none';
+            elements.signupForm.reset();
         }
 
         // Show login view
         function showLoginView() {
             elements.signupView.style.display = 'none';
             elements.loginView.style.display = 'flex';
+            elements.loginForm.reset();
         }
 
         // Setup event listeners
@@ -1185,37 +1293,90 @@
                     }
                 });
             });
+            
+            // Password visibility toggles
+            setupPasswordToggles();
+        }
+
+        // Set up password visibility toggles
+        function setupPasswordToggles() {
+            // Signup password toggle
+            elements.toggleSignupPassword.addEventListener('click', () => {
+                togglePasswordVisibility('signupPassword', elements.toggleSignupPassword);
+            });
+            
+            // Signup confirm toggle
+            elements.toggleSignupConfirm.addEventListener('click', () => {
+                togglePasswordVisibility('signupConfirm', elements.toggleSignupConfirm);
+            });
+            
+            // Login password toggle
+            elements.toggleLoginPassword.addEventListener('click', () => {
+                togglePasswordVisibility('loginPassword', elements.toggleLoginPassword);
+            });
+        }
+        
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, toggleIcon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
         }
 
         // Sign up with email/password
         function signUpWithEmail(email, password) {
+            // Show loading spinner
+            elements.signupSpinner.style.display = 'inline-block';
+            elements.signupText.style.display = 'none';
+            
             auth.createUserWithEmailAndPassword(email, password)
                 .then(() => {
+                    // Hide spinner
+                    elements.signupSpinner.style.display = 'none';
+                    elements.signupText.style.display = 'inline';
+                    
                     // Reset form and show success message
                     elements.signupForm.reset();
                     elements.passwordMatchError.style.display = 'none';
+                    
                     showToast('Account created successfully!', 'success');
-                    if (analytics) {
-                        analytics.logEvent('sign_up', { method: 'email' });
-                    }
                 })
                 .catch((error) => {
+                    // Hide spinner
+                    elements.signupSpinner.style.display = 'none';
+                    elements.signupText.style.display = 'inline';
+                    
                     showToast(error.message, 'error');
                 });
         }
 
         // Sign in with email/password
         function signInWithEmail(email, password) {
+            // Show loading spinner
+            elements.loginSpinner.style.display = 'inline-block';
+            elements.loginText.style.display = 'none';
+            
             auth.signInWithEmailAndPassword(email, password)
                 .then(() => {
-                    // Reset form and show success message
+                    // Hide spinner
+                    elements.loginSpinner.style.display = 'none';
+                    elements.loginText.style.display = 'inline';
+                    
+                    // Reset form
                     elements.loginForm.reset();
-                    showToast('Login successful!', 'success');
-                    if (analytics) {
-                        analytics.logEvent('login', { method: 'email' });
-                    }
                 })
                 .catch((error) => {
+                    // Hide spinner
+                    elements.loginSpinner.style.display = 'none';
+                    elements.loginText.style.display = 'inline';
+                    
                     showToast(error.message, 'error');
                 });
         }
@@ -1226,9 +1387,6 @@
             auth.signInWithPopup(provider)
                 .then(() => {
                     showToast('Signed in with Google', 'success');
-                    if (analytics) {
-                        analytics.logEvent('login', { method: 'google' });
-                    }
                 })
                 .catch((error) => {
                     showToast(error.message, 'error');
@@ -1246,46 +1404,8 @@
                 });
         }
 
-        // Load user data from Firestore
-        function loadUserData() {
-            if (!state.currentUser) return;
-            
-            const userId = state.currentUser.uid;
-            
-            // Load loans
-            db.collection('users').doc(userId).collection('loans').get()
-                .then((querySnapshot) => {
-                    state.loans = [];
-                    querySnapshot.forEach((doc) => {
-                        state.loans.push({ id: doc.id, ...doc.data() });
-                    });
-                    renderLoans();
-                    if (analytics) {
-                        analytics.logEvent('loans_loaded', { count: state.loans.length });
-                    }
-                })
-                .catch((error) => {
-                    showToast('Error loading loans: ' + error.message, 'error');
-                });
-            
-            // Load payments
-            db.collection('users').doc(userId).collection('payments').get()
-                .then((querySnapshot) => {
-                    state.payments = [];
-                    querySnapshot.forEach((doc) => {
-                        state.payments.push({ id: doc.id, ...doc.data() });
-                    });
-                    renderPaymentHistory();
-                })
-                .catch((error) => {
-                    showToast('Error loading payments: ' + error.message, 'error');
-                });
-        }
-
-        // Add a new loan
+        // Add a new loan (simplified for demo)
         function addLoan() {
-            if (!state.currentUser) return;
-            
             const loan = {
                 name: elements.loanName.value,
                 balance: parseFloat(elements.loanBalance.value),
@@ -1298,27 +1418,68 @@
                     parseFloat(elements.minPayment.value)
                 ),
                 totalInterest: 0,
-                paid: 0,
-                payments: []
+                paid: 0
             };
             
-            const userId = state.currentUser.uid;
+            // Create loan card
+            const loanCard = document.createElement('div');
+            loanCard.className = 'loan-card';
+            loanCard.innerHTML = `
+                <div class="loan-header">
+                    <div class="loan-name">${loan.name}</div>
+                    <div class="loan-details">
+                        <span>${loan.interestRate}% APR</span>
+                        <span>Min: $${loan.minPayment.toFixed(2)}/mo</span>
+                    </div>
+                </div>
+                <div class="loan-body">
+                    <div class="loan-stats">
+                        <div class="stat">
+                            <div class="stat-label">Balance</div>
+                            <div class="stat-value">$${loan.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Interest</div>
+                            <div class="stat-value">$${loan.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Payoff Date</div>
+                            <div class="stat-value">${loan.payoffDate}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Strategy</div>
+                            <div class="stat-value">${loan.strategy === 'avalanche' ? 'Avalanche' : 'Snowball'}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%;"></div>
+                    </div>
+                    
+                    <div class="payment-form">
+                        <h4>Make a Payment</h4>
+                        <div class="payment-row">
+                            <div class="payment-input">
+                                <span>$</span>
+                                <input type="number" class="payment-amount" min="${loan.minPayment.toFixed(2)}" step="0.01" value="${loan.minPayment.toFixed(2)}">
+                            </div>
+                            <button class="btn btn-secondary btn-sm record-payment">Record Payment</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="loan-footer">
+                    <button class="btn btn-sm btn-outline view-history">View History</button>
+                    <button class="btn btn-sm btn-danger remove-loan">Remove</button>
+                </div>
+            `;
             
-            // Add to Firestore
-            db.collection('users').doc(userId).collection('loans').add(loan)
-                .then((docRef) => {
-                    loan.id = docRef.id;
-                    state.loans.push(loan);
-                    renderLoans();
-                    elements.loanForm.reset();
-                    showToast('Loan added successfully!', 'success');
-                    if (analytics) {
-                        analytics.logEvent('add_loan', { name: loan.name, amount: loan.balance });
-                    }
-                })
-                .catch((error) => {
-                    showToast('Error adding loan: ' + error.message, 'error');
-                });
+            elements.loansContainer.innerHTML = '';
+            elements.loansContainer.appendChild(loanCard);
+            
+            // Reset form
+            elements.loanForm.reset();
+            
+            showToast('Loan added successfully!', 'success');
         }
 
         // Calculate payoff date for a loan
@@ -1342,312 +1503,20 @@
             return payoffDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         }
 
-        // Render loans to the dashboard
-        function renderLoans() {
-            if (state.loans.length === 0) {
-                elements.loansContainer.innerHTML = `
-                    <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 30px;">
-                        <h3>No Loans Added Yet</h3>
-                        <p>Get started by adding your first loan using the form above.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            elements.loansContainer.innerHTML = '';
-            
-            state.loans.forEach(loan => {
-                const paidAmount = 0; // To be implemented with payments
-                const paidPercentage = 0; // To be implemented with payments
-                
-                const loanCard = document.createElement('div');
-                loanCard.className = 'loan-card';
-                loanCard.innerHTML = `
-                    <div class="loan-header">
-                        <div class="loan-name">${loan.name}</div>
-                        <div class="loan-details">
-                            <span>${loan.interestRate}% APR</span>
-                            <span>Min: $${loan.minPayment.toFixed(2)}/mo</span>
-                        </div>
-                    </div>
-                    <div class="loan-body">
-                        <div class="loan-stats">
-                            <div class="stat">
-                                <div class="stat-label">Balance</div>
-                                <div class="stat-value">$${loan.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-label">Interest</div>
-                                <div class="stat-value">$${loan.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-label">Payoff Date</div>
-                                <div class="stat-value">${loan.payoffDate}</div>
-                            </div>
-                            <div class="stat">
-                                <div class="stat-label">Strategy</div>
-                                <div class="stat-value">${loan.strategy === 'avalanche' ? 'Avalanche' : 'Snowball'}</div>
-                            </div>
-                        </div>
-                        
-                        <div class="progress-bar">
-                            <div class="progress" style="width: ${paidPercentage}%;"></div>
-                        </div>
-                        
-                        <div class="payment-form">
-                            <h4>Make a Payment</h4>
-                            <div class="payment-row">
-                                <div class="payment-input">
-                                    <span>$</span>
-                                    <input type="number" class="payment-amount" min="${loan.minPayment.toFixed(2)}" step="0.01" value="${loan.minPayment.toFixed(2)}">
-                                </div>
-                                <button class="btn btn-secondary btn-sm record-payment" data-id="${loan.id}">Record Payment</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="loan-footer">
-                        <button class="btn btn-sm btn-outline view-history" data-id="${loan.id}">View History</button>
-                        <button class="btn btn-sm btn-danger remove-loan" data-id="${loan.id}">Remove</button>
-                    </div>
-                `;
-                
-                elements.loansContainer.appendChild(loanCard);
-                
-                // Add event listeners to buttons
-                loanCard.querySelector('.record-payment').addEventListener('click', function() {
-                    const loanId = this.getAttribute('data-id');
-                    const amount = parseFloat(loanCard.querySelector('.payment-amount').value);
-                    recordPayment(loanId, amount);
-                });
-                
-                loanCard.querySelector('.remove-loan').addEventListener('click', function() {
-                    const loanId = this.getAttribute('data-id');
-                    removeLoan(loanId);
-                });
-                
-                loanCard.querySelector('.view-history').addEventListener('click', function() {
-                    const loanId = this.getAttribute('data-id');
-                    showLoanHistory(loanId);
-                });
-            });
-        }
-
-        // Record a payment
-        function recordPayment(loanId, amount) {
-            if (!state.currentUser) return;
-            
-            const loan = state.loans.find(l => l.id === loanId);
-            if (!loan) return;
-            
-            if (amount < loan.minPayment) {
-                showToast(`Payment must be at least $${loan.minPayment.toFixed(2)}`, 'error');
-                return;
-            }
-            
-            const payment = {
-                loanId: loanId,
-                loanName: loan.name,
-                amount: amount,
-                date: new Date().toLocaleDateString('en-US'),
-                interest: amount * (loan.interestRate / 100 / 12),
-                principal: amount - (amount * (loan.interestRate / 100 / 12))
-            };
-            
-            const userId = state.currentUser.uid;
-            
-            // Add to Firestore
-            db.collection('users').doc(userId).collection('payments').add(payment)
-                .then((docRef) => {
-                    payment.id = docRef.id;
-                    state.payments.push(payment);
-                    renderPaymentHistory();
-                    showToast('Payment recorded!', 'success');
-                    if (analytics) {
-                        analytics.logEvent('record_payment', { loanId: loanId, amount: amount });
-                    }
-                })
-                .catch((error) => {
-                    showToast('Error recording payment: ' + error.message, 'error');
-                });
-        }
-
-        // Render payment history
-        function renderPaymentHistory() {
-            if (state.payments.length === 0) {
-                elements.historyContainer.innerHTML = `
-                    <div class="card" style="text-align: center; padding: 30px;">
-                        <h3>No Payments Recorded Yet</h3>
-                        <p>Make your first payment to see it appear here.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Sort payments by date (newest first)
-            const sortedPayments = [...state.payments].sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            let html = `
-                <div class="card">
-                    <h3>Payment History</h3>
-                    <div style="overflow-x: auto;">
-                        <table class="history-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Loan</th>
-                                    <th>Amount</th>
-                                    <th>Principal</th>
-                                    <th>Interest</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-            
-            sortedPayments.forEach(payment => {
-                html += `
-                    <tr>
-                        <td>${payment.date}</td>
-                        <td>${payment.loanName}</td>
-                        <td>$${payment.amount.toFixed(2)}</td>
-                        <td>$${payment.principal.toFixed(2)}</td>
-                        <td>$${payment.interest.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-            
-            html += `
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-            
-            elements.historyContainer.innerHTML = html;
-        }
-
-        // Show loan-specific payment history
-        function showLoanHistory(loanId) {
-            const loan = state.loans.find(l => l.id === loanId);
-            if (!loan) return;
-            
-            const loanPayments = state.payments.filter(p => p.loanId === loanId);
-            
-            if (loanPayments.length === 0) {
-                elements.historyContainer.innerHTML = `
-                    <div class="card" style="text-align: center; padding: 30px;">
-                        <h3>No Payments for ${loan.name}</h3>
-                        <p>Make your first payment to see it appear here.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Sort payments by date (newest first)
-            const sortedPayments = [...loanPayments].sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            let html = `
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-                        <h3>Payment History: ${loan.name}</h3>
-                        <button class="btn btn-sm btn-outline" id="backToAll">Back to All Payments</button>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table class="history-table">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Amount</th>
-                                    <th>Principal</th>
-                                    <th>Interest</th>
-                                    <th>Balance After</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-            
-            // Calculate running balance
-            let runningBalance = loan.balance;
-            
-            sortedPayments.forEach(payment => {
-                runningBalance -= payment.principal;
-                
-                html += `
-                    <tr>
-                        <td>${payment.date}</td>
-                        <td>$${payment.amount.toFixed(2)}</td>
-                        <td>$${payment.principal.toFixed(2)}</td>
-                        <td>$${payment.interest.toFixed(2)}</td>
-                        <td>$${runningBalance.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-            
-            html += `
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-            
-            elements.historyContainer.innerHTML = html;
-            
-            // Add event listener to back button
-            document.getElementById('backToAll').addEventListener('click', () => {
-                renderPaymentHistory();
-                switchTab('payments');
-            });
-            
-            // Switch to payment history tab
-            switchTab('payments');
-        }
-
-        // Remove a loan
-        function removeLoan(loanId) {
-            if (!state.currentUser || !confirm('Are you sure you want to remove this loan?')) return;
-            
-            const userId = state.currentUser.uid;
-            
-            // Remove from Firestore
-            db.collection('users').doc(userId).collection('loans').doc(loanId).delete()
-                .then(() => {
-                    // Remove from local state
-                    state.loans = state.loans.filter(loan => loan.id !== loanId);
-                    renderLoans();
-                    showToast('Loan removed successfully', 'success');
-                    if (analytics) {
-                        analytics.logEvent('remove_loan', { loanId: loanId });
-                    }
-                })
-                .catch((error) => {
-                    showToast('Error removing loan: ' + error.message, 'error');
-                });
-        }
-
         // Reset all loans
         function resetLoans() {
-            if (!state.currentUser || !confirm('Are you sure you want to reset all loans?')) return;
-            
-            const userId = state.currentUser.uid;
-            
-            // Delete all loans from Firestore
-            const batch = db.batch();
-            state.loans.forEach(loan => {
-                const loanRef = db.collection('users').doc(userId).collection('loans').doc(loan.id);
-                batch.delete(loanRef);
-            });
-            
-            batch.commit()
-                .then(() => {
-                    state.loans = [];
-                    renderLoans();
-                    showToast('All loans have been reset', 'success');
-                    if (analytics) {
-                        analytics.logEvent('reset_loans');
-                    }
-                })
-                .catch((error) => {
-                    showToast('Error resetting loans: ' + error.message, 'error');
-                });
+            if (confirm('Are you sure you want to reset all loans?')) {
+                elements.loansContainer.innerHTML = `
+                    <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <h3>No Loans Added Yet</h3>
+                        <p>Get started by adding your first loan using the form above.</p>
+                        <div style="margin-top: 20px; font-size: 4rem; color: var(--secondary);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                `;
+                showToast('All loans have been reset', 'success');
+            }
         }
 
         // Switch tabs
@@ -1671,7 +1540,11 @@
 
         // Show toast notification
         function showToast(message, type = 'info') {
-            elements.toast.textContent = message;
+            const icon = type === 'success' ? 'fa-check-circle' : 
+                         type === 'error' ? 'fa-exclamation-circle' : 
+                         'fa-info-circle';
+            
+            elements.toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
             elements.toast.className = `toast ${type} show`;
             
             setTimeout(() => {
