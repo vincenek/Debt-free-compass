@@ -6,9 +6,6 @@
     <title>DebtFree Compass - Loan Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -95,192 +92,9 @@
             white-space: nowrap;
         }
 
-        .auth-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 20px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-            font-size: 0.9rem;
-            white-space: nowrap;
-            gap: 8px;
-        }
-
-        .btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: var(--secondary);
-        }
-
-        .btn-secondary:hover {
-            background: var(--secondary-dark);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid white;
-            color: white;
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-danger {
-            background: var(--danger);
-        }
-
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-
-        .btn-sm {
-            padding: 8px 16px;
-            font-size: 0.875rem;
-        }
-
-        /* Auth Pages */
-        .auth-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: calc(100vh - 70px);
-            padding: 20px;
-            width: 100%;
-        }
-
-        .auth-card {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow-lg);
-            padding: 30px;
-            width: 100%;
-            max-width: 450px;
-            box-sizing: border-box;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .auth-header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .auth-header h2 {
-            margin-bottom: 10px;
-            color: var(--dark);
-            font-size: 1.75rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .auth-header p {
-            color: var(--gray);
-            font-size: 1rem;
-        }
-
-        .auth-form .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .auth-form label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.95rem;
-        }
-
-        .auth-form input {
-            width: 100%;
-            padding: 14px;
-            padding-left: 40px;
-            border: 1px solid var(--light-gray);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-            box-sizing: border-box;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 12px;
-            top: 40px;
-            color: var(--gray);
-        }
-
-        .auth-form input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .auth-form .btn {
-            width: 100%;
-            padding: 14px;
-            margin-top: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
-        .auth-footer {
-            text-align: center;
-            margin-top: 20px;
-            color: var(--gray);
-            font-size: 0.95rem;
-        }
-
-        .auth-footer a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .auth-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 25px 0;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid var(--light-gray);
-        }
-
-        .divider span {
-            padding: 0 10px;
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
         /* Main App Styles */
         .app-view {
-            display: none;
+            display: block;
             animation: fadeIn 0.5s ease;
         }
 
@@ -498,6 +312,60 @@
             flex-wrap: wrap;
         }
 
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.875rem;
+        }
+
         .chart-container {
             height: 200px;
             margin: 20px 0;
@@ -613,83 +481,12 @@
             border-left: 4px solid var(--primary);
         }
 
-        /* User info */
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: var(--primary);
-            overflow: hidden;
-            flex-shrink: 0;
-            border: 2px solid white;
-        }
-
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Payment form */
-        .payment-form {
-            background: var(--light);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .payment-form h4 {
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-        }
-
-        .payment-row {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .payment-input {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .payment-input span {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .payment-input input {
-            width: 100%;
-            max-width: 140px;
-            padding: 12px;
-        }
-
         /* Responsive Design */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 10px;
-            }
-            
-            .auth-buttons, .user-info {
-                width: 100%;
-                justify-content: center;
             }
             
             .tabs {
@@ -739,15 +536,6 @@
         }
 
         @media (max-width: 480px) {
-            .auth-card {
-                padding: 20px;
-            }
-            
-            .auth-form input {
-                padding: 12px;
-                padding-left: 36px;
-            }
-            
             .btn {
                 padding: 10px 15px;
                 font-size: 0.9rem;
@@ -767,159 +555,29 @@
                 padding: 15px;
             }
         }
-        
-        /* Loading spinner */
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 3px solid white;
-            animation: spin 1s linear infinite;
-            display: none;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Password visibility toggle */
-        .password-toggle {
-            position: absolute;
-            right: 12px;
-            top: 40px;
-            cursor: pointer;
-            color: var(--gray);
-        }
     </style>
 </head>
 <body>
     <!-- Toast notifications -->
     <div id="toast" class="toast">
         <i class="fas fa-check-circle"></i>
-        <span>Successfully logged in!</span>
+        <span>Successfully added loan!</span>
     </div>
 
-    <!-- Header with Logo and Auth Buttons -->
+    <!-- Header -->
     <header>
         <div class="header-content">
             <div class="logo">
                 <div class="logo-icon">DF</div>
                 <div class="logo-text">DebtFree Compass</div>
             </div>
-            <div id="authButtons" class="auth-buttons">
-                <button id="loginBtn" class="btn btn-outline">
-                    <i class="fas fa-sign-in-alt"></i>Log In
-                </button>
-                <button id="signupBtn" class="btn">
-                    <i class="fas fa-user-plus"></i>Sign Up
-                </button>
-            </div>
-            <div id="userSection" style="display: none;" class="user-info">
-                <div id="userAvatar" class="user-avatar"></div>
-                <button id="logoutBtn" class="btn btn-sm btn-outline">
-                    <i class="fas fa-sign-out-alt"></i>Log Out
+            <div class="user-info">
+                <button id="resetBtn" class="btn btn-outline">
+                    <i class="fas fa-sync-alt"></i>Reset All
                 </button>
             </div>
         </div>
     </header>
-
-    <!-- Auth Views -->
-    <div id="authViews">
-        <!-- Sign Up View -->
-        <div id="signupView" class="auth-container">
-            <div class="auth-card">
-                <div class="auth-header">
-                    <h2>Create Your Account</h2>
-                    <p>Start your journey to becoming debt-free</p>
-                </div>
-                <form id="signupForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="signupEmail">Email</label>
-                        <i class="fas fa-envelope input-icon"></i>
-                        <input type="email" id="signupEmail" required placeholder="Enter your email">
-                    </div>
-                    <div class="form-group">
-                        <label for="signupPassword">Password (min 6 characters)</label>
-                        <i class="fas fa-lock input-icon"></i>
-                        <input type="password" id="signupPassword" minlength="6" required placeholder="Create a password">
-                        <i class="fas fa-eye password-toggle" id="toggleSignupPassword"></i>
-                    </div>
-                    <div class="form-group">
-                        <label for="signupConfirm">Confirm Password</label>
-                        <i class="fas fa-lock input-icon"></i>
-                        <input type="password" id="signupConfirm" minlength="6" required placeholder="Confirm your password">
-                        <i class="fas fa-eye password-toggle" id="toggleSignupConfirm"></i>
-                        <div id="passwordMatchError" style="color: var(--danger); font-size: 0.85rem; margin-top: 5px; display: none;">Passwords do not match</div>
-                    </div>
-                    <button type="submit" class="btn">
-                        <span id="signupText">Sign Up</span>
-                        <div class="spinner" id="signupSpinner"></div>
-                    </button>
-                </form>
-                
-                <div class="divider"><span>or</span></div>
-                
-                <button id="googleSignupBtn" class="btn btn-outline" style="color: var(--dark); border-color: var(--light-gray);">
-                    <svg style="width:20px;height:20px;margin-right:10px;" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"></path>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"></path>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"></path>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"></path>
-                    </svg>
-                    Sign up with Google
-                </button>
-                
-                <div class="auth-footer">
-                    Already have an account? <a href="#" id="showLoginLink">Log in</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Login View -->
-        <div id="loginView" class="auth-container" style="display: none;">
-            <div class="auth-card">
-                <div class="auth-header">
-                    <h2>Welcome Back</h2>
-                    <p>Continue your journey to financial freedom</p>
-                </div>
-                <form id="loginForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="loginEmail">Email</label>
-                        <i class="fas fa-envelope input-icon"></i>
-                        <input type="email" id="loginEmail" required placeholder="Enter your email">
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Password</label>
-                        <i class="fas fa-lock input-icon"></i>
-                        <input type="password" id="loginPassword" required placeholder="Enter your password">
-                        <i class="fas fa-eye password-toggle" id="toggleLoginPassword"></i>
-                    </div>
-                    <button type="submit" class="btn">
-                        <span id="loginText">Log In</span>
-                        <div class="spinner" id="loginSpinner"></div>
-                    </button>
-                </form>
-                
-                <div class="divider"><span>or</span></div>
-                
-                <button id="googleLoginBtn" class="btn btn-outline" style="color: var(--dark); border-color: var(--light-gray);">
-                    <svg style="width:20px;height:20px;margin-right:10px;" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"></path>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"></path>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"></path>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"></path>
-                    </svg>
-                    Log in with Google
-                </button>
-                
-                <div class="auth-footer">
-                    Don't have an account? <a href="#" id="showSignupLink">Sign up</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Main App View -->
     <div id="appView" class="app-view">
@@ -971,7 +629,9 @@
                             </div>
                         </div>
                         
-                        <button type="submit" class="btn">Add Loan</button>
+                        <button type="submit" class="btn">
+                            <i class="fas fa-plus-circle"></i>Add Loan
+                        </button>
                     </form>
                 </div>
                 
@@ -979,7 +639,6 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Your Loans</h2>
-                        <button id="resetBtn" class="btn btn-danger btn-sm">Reset All</button>
                     </div>
                     
                     <div id="loansContainer" class="loans-grid">
@@ -1026,7 +685,6 @@
                     
                     <h3>Types of Data Collected</h3>
                     <ul>
-                        <li><strong>Personal Data:</strong> When you register, we collect your email address. If you authenticate with Google, we collect your name and profile picture.</li>
                         <li><strong>Financial Data:</strong> We collect information about your loans and payments that you voluntarily provide to use our Service.</li>
                         <li><strong>Usage Data:</strong> We may collect information on how the Service is accessed and used.</li>
                     </ul>
@@ -1035,15 +693,13 @@
                     <p>DebtFree Compass uses the collected data for various purposes:</p>
                     <ul>
                         <li>To provide and maintain our Service</li>
-                        <li>To notify you about changes to our Service</li>
                         <li>To allow you to participate in interactive features of our Service</li>
                         <li>To provide customer support</li>
-                        <li>To gather analysis or valuable information so we can improve our Service</li>
-                        <li>To monitor the usage of our Service</li>
+                        <li>To gather analysis to improve our Service</li>
                     </ul>
                     
-                    <h2>Data Storage and Security</h2>
-                    <p>We use Firebase Authentication and Firestore to securely store your data. We implement security measures to protect against unauthorized access to or unauthorized alteration, disclosure, or destruction of data.</p>
+                    <h2>Data Storage</h2>
+                    <p>All data is stored locally in your browser. We do not collect or store any personal information on our servers.</p>
                     
                     <h2>Changes to This Privacy Policy</h2>
                     <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
@@ -1070,202 +726,60 @@
     </footer>
 
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyD6uE1Up7u-9W4VsFvZbwvVuWHYV7YBR8o",
-            authDomain: "debt-tracker-f1363.firebaseapp.com",
-            projectId: "debt-tracker-f1363",
-            storageBucket: "debt-tracker-f1363.appspot.com",
-            messagingSenderId: "1084322691260",
-            appId: "1:1084322691260:web:1d1132a91a503344c4f8b9",
-            measurementId: "G-CRZ34K0KWK"
+        // App State
+        const state = {
+            loans: [],
+            payments: []
         };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
 
         // DOM Elements
         const elements = {
-            // Auth Views
-            authViews: document.getElementById('authViews'),
-            signupView: document.getElementById('signupView'),
-            loginView: document.getElementById('loginView'),
-            signupForm: document.getElementById('signupForm'),
-            loginForm: document.getElementById('loginForm'),
-            googleSignupBtn: document.getElementById('googleSignupBtn'),
-            googleLoginBtn: document.getElementById('googleLoginBtn'),
-            showLoginLink: document.getElementById('showLoginLink'),
-            showSignupLink: document.getElementById('showSignupLink'),
-            passwordMatchError: document.getElementById('passwordMatchError'),
-            
-            // App View
             appView: document.getElementById('appView'),
             loanForm: document.getElementById('loanForm'),
             loansContainer: document.getElementById('loansContainer'),
             resetBtn: document.getElementById('resetBtn'),
             historyContainer: document.getElementById('historyContainer'),
-            
-            // Auth Buttons
-            authButtons: document.getElementById('authButtons'),
-            loginBtn: document.getElementById('loginBtn'),
-            signupBtn: document.getElementById('signupBtn'),
-            userSection: document.getElementById('userSection'),
-            userAvatar: document.getElementById('userAvatar'),
-            logoutBtn: document.getElementById('logoutBtn'),
-            
-            // Tabs
             tabs: document.querySelectorAll('.tab'),
             tabContents: document.querySelectorAll('.tab-content'),
-            
-            // Toast
-            toast: document.getElementById('toast'),
-            
-            // Spinners
-            signupSpinner: document.getElementById('signupSpinner'),
-            loginSpinner: document.getElementById('loginSpinner'),
-            signupText: document.getElementById('signupText'),
-            loginText: document.getElementById('loginText'),
-            
-            // Password toggles
-            toggleSignupPassword: document.getElementById('toggleSignupPassword'),
-            toggleSignupConfirm: document.getElementById('toggleSignupConfirm'),
-            toggleLoginPassword: document.getElementById('toggleLoginPassword')
-        };
-
-        // App State
-        const state = {
-            currentUser: null,
-            loans: [],
-            payments: []
+            toast: document.getElementById('toast')
         };
 
         // Initialize the application
         function init() {
             setupEventListeners();
-            initAuthState();
+            loadData();
         }
 
-        // Initialize Firebase auth state listener
-        function initAuthState() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    // User is signed in
-                    state.currentUser = user;
-                    showAppView();
-                    showToast(`Welcome back, ${user.email || 'User'}!`, 'success');
-                    
-                    // Set up user avatar
-                    if (user.photoURL) {
-                        elements.userAvatar.innerHTML = `<img src="${user.photoURL}" alt="User Avatar">`;
-                    } else {
-                        const initials = user.email ? user.email.charAt(0).toUpperCase() : 'U';
-                        elements.userAvatar.textContent = initials;
-                    }
-                } else {
-                    // User is signed out
-                    state.currentUser = null;
-                    showAuthView();
-                }
-            });
+        // Load data from localStorage
+        function loadData() {
+            const savedLoans = localStorage.getItem('loans');
+            const savedPayments = localStorage.getItem('payments');
+            
+            if (savedLoans) {
+                state.loans = JSON.parse(savedLoans);
+            }
+            
+            if (savedPayments) {
+                state.payments = JSON.parse(savedPayments);
+            }
+            
+            if (state.loans.length > 0) {
+                renderLoans();
+            }
+            
+            if (state.payments.length > 0) {
+                renderPaymentHistory();
+            }
         }
 
-        // Show auth views
-        function showAuthView() {
-            elements.authViews.style.display = 'flex';
-            elements.appView.style.display = 'none';
-            elements.authButtons.style.display = 'flex';
-            elements.userSection.style.display = 'none';
-            showSignupView();
-        }
-
-        // Show app view
-        function showAppView() {
-            elements.authViews.style.display = 'none';
-            elements.appView.style.display = 'block';
-            elements.authButtons.style.display = 'none';
-            elements.userSection.style.display = 'flex';
-        }
-
-        // Show signup view
-        function showSignupView() {
-            elements.signupView.style.display = 'flex';
-            elements.loginView.style.display = 'none';
-            elements.passwordMatchError.style.display = 'none';
-            elements.signupForm.reset();
-        }
-
-        // Show login view
-        function showLoginView() {
-            elements.signupView.style.display = 'none';
-            elements.loginView.style.display = 'flex';
-            elements.loginForm.reset();
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('loans', JSON.stringify(state.loans));
+            localStorage.setItem('payments', JSON.stringify(state.payments));
         }
 
         // Setup event listeners
         function setupEventListeners() {
-            // Auth navigation
-            elements.signupBtn.addEventListener('click', showSignupView);
-            elements.loginBtn.addEventListener('click', showLoginView);
-            elements.showLoginLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                showLoginView();
-            });
-            elements.showSignupLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                showSignupView();
-            });
-            
-            // Password confirmation validation
-            elements.signupConfirm.addEventListener('input', () => {
-                const password = elements.signupPassword.value;
-                const confirm = elements.signupConfirm.value;
-                
-                if (password !== confirm && confirm.length >= 6) {
-                    elements.passwordMatchError.style.display = 'block';
-                } else {
-                    elements.passwordMatchError.style.display = 'none';
-                }
-            });
-            
-            // Auth forms
-            elements.signupForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = elements.signupEmail.value;
-                const password = elements.signupPassword.value;
-                const confirm = elements.signupConfirm.value;
-                
-                // Form validation
-                if (password !== confirm) {
-                    elements.passwordMatchError.style.display = 'block';
-                    showToast('Passwords do not match', 'error');
-                    return;
-                }
-                
-                if (password.length < 6) {
-                    showToast('Password must be at least 6 characters', 'error');
-                    return;
-                }
-                
-                signUpWithEmail(email, password);
-            });
-            
-            elements.loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = elements.loginEmail.value;
-                const password = elements.loginPassword.value;
-                
-                signInWithEmail(email, password);
-            });
-            
-            // Google sign in/up
-            elements.googleSignupBtn.addEventListener('click', signInWithGoogle);
-            elements.googleLoginBtn.addEventListener('click', signInWithGoogle);
-            
-            // Logout
-            elements.logoutBtn.addEventListener('click', signOut);
-            
             // Loan form
             elements.loanForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -1293,120 +807,12 @@
                     }
                 });
             });
-            
-            // Password visibility toggles
-            setupPasswordToggles();
         }
 
-        // Set up password visibility toggles
-        function setupPasswordToggles() {
-            // Signup password toggle
-            elements.toggleSignupPassword.addEventListener('click', () => {
-                togglePasswordVisibility('signupPassword', elements.toggleSignupPassword);
-            });
-            
-            // Signup confirm toggle
-            elements.toggleSignupConfirm.addEventListener('click', () => {
-                togglePasswordVisibility('signupConfirm', elements.toggleSignupConfirm);
-            });
-            
-            // Login password toggle
-            elements.toggleLoginPassword.addEventListener('click', () => {
-                togglePasswordVisibility('loginPassword', elements.toggleLoginPassword);
-            });
-        }
-        
-        // Toggle password visibility
-        function togglePasswordVisibility(inputId, toggleIcon) {
-            const input = document.getElementById(inputId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
-        }
-
-        // Sign up with email/password
-        function signUpWithEmail(email, password) {
-            // Show loading spinner
-            elements.signupSpinner.style.display = 'inline-block';
-            elements.signupText.style.display = 'none';
-            
-            auth.createUserWithEmailAndPassword(email, password)
-                .then(() => {
-                    // Hide spinner
-                    elements.signupSpinner.style.display = 'none';
-                    elements.signupText.style.display = 'inline';
-                    
-                    // Reset form and show success message
-                    elements.signupForm.reset();
-                    elements.passwordMatchError.style.display = 'none';
-                    
-                    showToast('Account created successfully!', 'success');
-                })
-                .catch((error) => {
-                    // Hide spinner
-                    elements.signupSpinner.style.display = 'none';
-                    elements.signupText.style.display = 'inline';
-                    
-                    showToast(error.message, 'error');
-                });
-        }
-
-        // Sign in with email/password
-        function signInWithEmail(email, password) {
-            // Show loading spinner
-            elements.loginSpinner.style.display = 'inline-block';
-            elements.loginText.style.display = 'none';
-            
-            auth.signInWithEmailAndPassword(email, password)
-                .then(() => {
-                    // Hide spinner
-                    elements.loginSpinner.style.display = 'none';
-                    elements.loginText.style.display = 'inline';
-                    
-                    // Reset form
-                    elements.loginForm.reset();
-                })
-                .catch((error) => {
-                    // Hide spinner
-                    elements.loginSpinner.style.display = 'none';
-                    elements.loginText.style.display = 'inline';
-                    
-                    showToast(error.message, 'error');
-                });
-        }
-
-        // Sign in with Google
-        function signInWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-                .then(() => {
-                    showToast('Signed in with Google', 'success');
-                })
-                .catch((error) => {
-                    showToast(error.message, 'error');
-                });
-        }
-
-        // Sign out
-        function signOut() {
-            auth.signOut()
-                .then(() => {
-                    showToast('You have been signed out', 'info');
-                })
-                .catch((error) => {
-                    showToast(error.message, 'error');
-                });
-        }
-
-        // Add a new loan (simplified for demo)
+        // Add a new loan
         function addLoan() {
             const loan = {
+                id: Date.now().toString(),
                 name: elements.loanName.value,
                 balance: parseFloat(elements.loanBalance.value),
                 interestRate: parseFloat(elements.interestRate.value),
@@ -1421,63 +827,10 @@
                 paid: 0
             };
             
-            // Create loan card
-            const loanCard = document.createElement('div');
-            loanCard.className = 'loan-card';
-            loanCard.innerHTML = `
-                <div class="loan-header">
-                    <div class="loan-name">${loan.name}</div>
-                    <div class="loan-details">
-                        <span>${loan.interestRate}% APR</span>
-                        <span>Min: $${loan.minPayment.toFixed(2)}/mo</span>
-                    </div>
-                </div>
-                <div class="loan-body">
-                    <div class="loan-stats">
-                        <div class="stat">
-                            <div class="stat-label">Balance</div>
-                            <div class="stat-value">$${loan.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">Interest</div>
-                            <div class="stat-value">$${loan.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">Payoff Date</div>
-                            <div class="stat-value">${loan.payoffDate}</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">Strategy</div>
-                            <div class="stat-value">${loan.strategy === 'avalanche' ? 'Avalanche' : 'Snowball'}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="progress-bar">
-                        <div class="progress" style="width: 0%;"></div>
-                    </div>
-                    
-                    <div class="payment-form">
-                        <h4>Make a Payment</h4>
-                        <div class="payment-row">
-                            <div class="payment-input">
-                                <span>$</span>
-                                <input type="number" class="payment-amount" min="${loan.minPayment.toFixed(2)}" step="0.01" value="${loan.minPayment.toFixed(2)}">
-                            </div>
-                            <button class="btn btn-secondary btn-sm record-payment">Record Payment</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="loan-footer">
-                    <button class="btn btn-sm btn-outline view-history">View History</button>
-                    <button class="btn btn-sm btn-danger remove-loan">Remove</button>
-                </div>
-            `;
-            
-            elements.loansContainer.innerHTML = '';
-            elements.loansContainer.appendChild(loanCard);
-            
-            // Reset form
+            state.loans.push(loan);
+            renderLoans();
             elements.loanForm.reset();
+            saveData();
             
             showToast('Loan added successfully!', 'success');
         }
@@ -1503,9 +856,9 @@
             return payoffDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         }
 
-        // Reset all loans
-        function resetLoans() {
-            if (confirm('Are you sure you want to reset all loans?')) {
+        // Render loans to the dashboard
+        function renderLoans() {
+            if (state.loans.length === 0) {
                 elements.loansContainer.innerHTML = `
                     <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
                         <h3>No Loans Added Yet</h3>
@@ -1515,8 +868,278 @@
                         </div>
                     </div>
                 `;
-                showToast('All loans have been reset', 'success');
+                return;
             }
+            
+            elements.loansContainer.innerHTML = '';
+            
+            state.loans.forEach(loan => {
+                const paidAmount = 0;
+                const paidPercentage = 0;
+                
+                const loanCard = document.createElement('div');
+                loanCard.className = 'loan-card';
+                loanCard.innerHTML = `
+                    <div class="loan-header">
+                        <div class="loan-name">${loan.name}</div>
+                        <div class="loan-details">
+                            <span>${loan.interestRate}% APR</span>
+                            <span>Min: $${loan.minPayment.toFixed(2)}/mo</span>
+                        </div>
+                    </div>
+                    <div class="loan-body">
+                        <div class="loan-stats">
+                            <div class="stat">
+                                <div class="stat-label">Balance</div>
+                                <div class="stat-value">$${loan.balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Interest</div>
+                                <div class="stat-value">$${loan.totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Payoff Date</div>
+                                <div class="stat-value">${loan.payoffDate}</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Strategy</div>
+                                <div class="stat-value">${loan.strategy === 'avalanche' ? 'Avalanche' : 'Snowball'}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-bar">
+                            <div class="progress" style="width: ${paidPercentage}%;"></div>
+                        </div>
+                        
+                        <div class="payment-form">
+                            <h4>Make a Payment</h4>
+                            <div class="payment-row">
+                                <div class="payment-input">
+                                    <span>$</span>
+                                    <input type="number" class="payment-amount" min="${loan.minPayment.toFixed(2)}" step="0.01" value="${loan.minPayment.toFixed(2)}">
+                                </div>
+                                <button class="btn btn-secondary btn-sm record-payment" data-id="${loan.id}">Record Payment</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loan-footer">
+                        <button class="btn btn-sm btn-outline view-history" data-id="${loan.id}">View History</button>
+                        <button class="btn btn-sm btn-danger remove-loan" data-id="${loan.id}">Remove</button>
+                    </div>
+                `;
+                
+                elements.loansContainer.appendChild(loanCard);
+                
+                // Add event listeners to buttons
+                loanCard.querySelector('.record-payment').addEventListener('click', function() {
+                    const loanId = this.getAttribute('data-id');
+                    const amount = parseFloat(loanCard.querySelector('.payment-amount').value);
+                    recordPayment(loanId, amount);
+                });
+                
+                loanCard.querySelector('.remove-loan').addEventListener('click', function() {
+                    const loanId = this.getAttribute('data-id');
+                    removeLoan(loanId);
+                });
+                
+                loanCard.querySelector('.view-history').addEventListener('click', function() {
+                    const loanId = this.getAttribute('data-id');
+                    showLoanHistory(loanId);
+                });
+            });
+        }
+
+        // Record a payment
+        function recordPayment(loanId, amount) {
+            const loan = state.loans.find(l => l.id === loanId);
+            if (!loan) return;
+            
+            if (amount < loan.minPayment) {
+                showToast(`Payment must be at least $${loan.minPayment.toFixed(2)}`, 'error');
+                return;
+            }
+            
+            const payment = {
+                id: Date.now().toString(),
+                loanId: loanId,
+                loanName: loan.name,
+                amount: amount,
+                date: new Date().toLocaleDateString('en-US'),
+                interest: amount * (loan.interestRate / 100 / 12),
+                principal: amount - (amount * (loan.interestRate / 100 / 12))
+            };
+            
+            state.payments.push(payment);
+            renderPaymentHistory();
+            saveData();
+            
+            showToast('Payment recorded!', 'success');
+        }
+
+        // Render payment history
+        function renderPaymentHistory() {
+            if (state.payments.length === 0) {
+                elements.historyContainer.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <h3>No Payments Recorded Yet</h3>
+                        <p>Make your first payment to see it appear here.</p>
+                        <div style="margin-top: 20px; font-size: 4rem; color: var(--primary);">
+                            <i class="fas fa-history"></i>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort payments by date (newest first)
+            const sortedPayments = [...state.payments].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            let html = `
+                <div class="card">
+                    <h3>Payment History</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="history-table" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background-color: var(--light);">
+                                    <th style="padding: 12px; text-align: left;">Date</th>
+                                    <th style="padding: 12px; text-align: left;">Loan</th>
+                                    <th style="padding: 12px; text-align: right;">Amount</th>
+                                    <th style="padding: 12px; text-align: right;">Principal</th>
+                                    <th style="padding: 12px; text-align: right;">Interest</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            sortedPayments.forEach(payment => {
+                html += `
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid var(--light-gray);">${payment.date}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid var(--light-gray);">${payment.loanName}</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid var(--light-gray);">$${payment.amount.toFixed(2)}</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid var(--light-gray);">$${payment.principal.toFixed(2)}</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid var(--light-gray);">$${payment.interest.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            elements.historyContainer.innerHTML = html;
+        }
+
+        // Show loan-specific payment history
+        function showLoanHistory(loanId) {
+            const loan = state.loans.find(l => l.id === loanId);
+            if (!loan) return;
+            
+            const loanPayments = state.payments.filter(p => p.loanId === loanId);
+            
+            if (loanPayments.length === 0) {
+                elements.historyContainer.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <h3>No Payments for ${loan.name}</h3>
+                        <p>Make your first payment to see it appear here.</p>
+                        <div style="margin-top: 20px; font-size: 4rem; color: var(--primary);">
+                            <i class="fas fa-history"></i>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort payments by date (newest first)
+            const sortedPayments = [...loanPayments].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            let html = `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                        <h3>Payment History: ${loan.name}</h3>
+                        <button class="btn btn-sm btn-outline" id="backToAll">Back to All Payments</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="history-table" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background-color: var(--light);">
+                                    <th style="padding: 12px; text-align: left;">Date</th>
+                                    <th style="padding: 12px; text-align: right;">Amount</th>
+                                    <th style="padding: 12px; text-align: right;">Principal</th>
+                                    <th style="padding: 12px; text-align: right;">Interest</th>
+                                    <th style="padding: 12px; text-align: right;">Balance After</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            // Calculate running balance
+            let runningBalance = loan.balance;
+            
+            sortedPayments.forEach(payment => {
+                runningBalance -= payment.principal;
+                
+                html += `
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid var(--light-gray);">${payment.date}</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid var(--light-gray);">$${payment.amount.toFixed(2)}</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid var(--light-gray);">$${payment.principal.toFixed(2)}</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid var(--light-gray);">$${payment.interest.toFixed(2)}</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid var(--light-gray);">$${runningBalance.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            elements.historyContainer.innerHTML = html;
+            
+            // Add event listener to back button
+            document.getElementById('backToAll').addEventListener('click', () => {
+                renderPaymentHistory();
+                switchTab('payments');
+            });
+            
+            // Switch to payment history tab
+            switchTab('payments');
+        }
+
+        // Remove a loan
+        function removeLoan(loanId) {
+            if (!confirm('Are you sure you want to remove this loan?')) return;
+            
+            // Remove loan
+            state.loans = state.loans.filter(loan => loan.id !== loanId);
+            
+            // Remove related payments
+            state.payments = state.payments.filter(payment => payment.loanId !== loanId);
+            
+            renderLoans();
+            renderPaymentHistory();
+            saveData();
+            
+            showToast('Loan removed successfully', 'success');
+        }
+
+        // Reset all loans
+        function resetLoans() {
+            if (!confirm('Are you sure you want to reset all loans?')) return;
+            
+            state.loans = [];
+            state.payments = [];
+            renderLoans();
+            renderPaymentHistory();
+            saveData();
+            
+            showToast('All loans have been reset', 'success');
         }
 
         // Switch tabs
