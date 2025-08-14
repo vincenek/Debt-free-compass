@@ -1041,7 +1041,6 @@
         // Initialize Firebase auth state listener
         function initAuthState() {
             auth.onAuthStateChanged(user => {
-                console.log('Auth state changed:', user);
                 if (user) {
                     // User is signed in
                     state.currentUser = user;
@@ -1060,7 +1059,6 @@
 
         // Show auth views
         function showAuthView() {
-            console.log('Showing auth view');
             elements.authViews.style.display = 'flex';
             elements.appView.style.display = 'none';
             elements.authButtons.style.display = 'flex';
@@ -1070,7 +1068,6 @@
 
         // Show app view
         function showAppView() {
-            console.log('Showing app view');
             elements.authViews.style.display = 'none';
             elements.appView.style.display = 'block';
             elements.authButtons.style.display = 'none';
@@ -1192,56 +1189,65 @@
 
         // Sign up with email/password
         function signUpWithEmail(email, password) {
-            console.log('Signing up:', email);
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     // Reset form and show success message
                     elements.signupForm.reset();
                     elements.passwordMatchError.style.display = 'none';
-                    showToast('Account created successfully!', 'success');
                     
+                    // Immediately show app view
+                    state.currentUser = userCredential.user;
+                    showAppView();
+                    loadUserData();
+                    
+                    showToast('Account created successfully!', 'success');
                     if (analytics) {
                         analytics.logEvent('sign_up', { method: 'email' });
                     }
                 })
                 .catch((error) => {
-                    console.error('Sign up error:', error);
                     showToast(error.message, 'error');
                 });
         }
 
         // Sign in with email/password
         function signInWithEmail(email, password) {
-            console.log('Signing in:', email);
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     // Reset form and show success message
                     elements.loginForm.reset();
-                    showToast('Login successful!', 'success');
                     
+                    // Immediately show app view
+                    state.currentUser = userCredential.user;
+                    showAppView();
+                    loadUserData();
+                    
+                    showToast('Login successful!', 'success');
                     if (analytics) {
                         analytics.logEvent('login', { method: 'email' });
                     }
                 })
                 .catch((error) => {
-                    console.error('Sign in error:', error);
                     showToast(error.message, 'error');
                 });
         }
 
         // Sign in with Google
         function signInWithGoogle() {
-            console.log('Signing in with Google');
             const provider = new firebase.auth.GoogleAuthProvider();
             auth.signInWithPopup(provider)
                 .then((result) => {
+                    // Immediately show app view
+                    state.currentUser = result.user;
+                    showAppView();
+                    loadUserData();
+                    
                     showToast('Signed in with Google', 'success');
                     if (analytics) {
                         analytics.logEvent('login', { method: 'google' });
                     }
                 })
                 .catch((error) => {
-                    console.error('Google sign in error:', error);
                     showToast(error.message, 'error');
                 });
         }
@@ -1253,7 +1259,6 @@
                     showToast('You have been signed out', 'info');
                 })
                 .catch((error) => {
-                    console.error('Sign out error:', error);
                     showToast(error.message, 'error');
                 });
         }
@@ -1263,7 +1268,6 @@
             if (!state.currentUser) return;
             
             const userId = state.currentUser.uid;
-            console.log('Loading user data for:', userId);
             
             // Load loans
             db.collection('users').doc(userId).collection('loans').get()
@@ -1278,7 +1282,6 @@
                     }
                 })
                 .catch((error) => {
-                    console.error('Error loading loans:', error);
                     showToast('Error loading loans: ' + error.message, 'error');
                 });
             
@@ -1292,7 +1295,6 @@
                     renderPaymentHistory();
                 })
                 .catch((error) => {
-                    console.error('Error loading payments:', error);
                     showToast('Error loading payments: ' + error.message, 'error');
                 });
         }
@@ -1332,7 +1334,6 @@
                     }
                 })
                 .catch((error) => {
-                    console.error('Error adding loan:', error);
                     showToast('Error adding loan: ' + error.message, 'error');
                 });
         }
@@ -1483,7 +1484,6 @@
                     }
                 })
                 .catch((error) => {
-                    console.error('Error recording payment:', error);
                     showToast('Error recording payment: ' + error.message, 'error');
                 });
         }
@@ -1636,7 +1636,6 @@
                     }
                 })
                 .catch((error) => {
-                    console.error('Error removing loan:', error);
                     showToast('Error removing loan: ' + error.message, 'error');
                 });
         }
@@ -1664,7 +1663,6 @@
                     }
                 })
                 .catch((error) => {
-                    console.error('Error resetting loans:', error);
                     showToast('Error resetting loans: ' + error.message, 'error');
                 });
         }
