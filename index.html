@@ -1190,16 +1190,10 @@
         // Sign up with email/password
         function signUpWithEmail(email, password) {
             auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
+                .then(() => {
                     // Reset form and show success message
                     elements.signupForm.reset();
                     elements.passwordMatchError.style.display = 'none';
-                    
-                    // Immediately show app view
-                    state.currentUser = userCredential.user;
-                    showAppView();
-                    loadUserData();
-                    
                     showToast('Account created successfully!', 'success');
                     if (analytics) {
                         analytics.logEvent('sign_up', { method: 'email' });
@@ -1213,15 +1207,9 @@
         // Sign in with email/password
         function signInWithEmail(email, password) {
             auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
+                .then(() => {
                     // Reset form and show success message
                     elements.loginForm.reset();
-                    
-                    // Immediately show app view
-                    state.currentUser = userCredential.user;
-                    showAppView();
-                    loadUserData();
-                    
                     showToast('Login successful!', 'success');
                     if (analytics) {
                         analytics.logEvent('login', { method: 'email' });
@@ -1236,12 +1224,7 @@
         function signInWithGoogle() {
             const provider = new firebase.auth.GoogleAuthProvider();
             auth.signInWithPopup(provider)
-                .then((result) => {
-                    // Immediately show app view
-                    state.currentUser = result.user;
-                    showAppView();
-                    loadUserData();
-                    
+                .then(() => {
                     showToast('Signed in with Google', 'success');
                     if (analytics) {
                         analytics.logEvent('login', { method: 'google' });
