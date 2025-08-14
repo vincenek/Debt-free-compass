@@ -773,6 +773,7 @@
                     <div class="form-group">
                         <label for="signupConfirm">Confirm Password</label>
                         <input type="password" id="signupConfirm" minlength="6" required placeholder="Confirm your password">
+                        <div id="passwordMatchError" style="color: var(--danger); font-size: 0.85rem; margin-top: 5px; display: none;">Passwords do not match</div>
                     </div>
                     <button type="submit" class="btn">Sign Up</button>
                 </form>
@@ -999,6 +1000,7 @@
             googleLoginBtn: document.getElementById('googleLoginBtn'),
             showLoginLink: document.getElementById('showLoginLink'),
             showSignupLink: document.getElementById('showSignupLink'),
+            passwordMatchError: document.getElementById('passwordMatchError'),
             
             // App View
             appView: document.getElementById('appView'),
@@ -1039,6 +1041,7 @@
         // Initialize Firebase auth state listener
         function initAuthState() {
             auth.onAuthStateChanged(user => {
+                console.log('Auth state changed:', user);
                 if (user) {
                     // User is signed in
                     state.currentUser = user;
@@ -1057,6 +1060,7 @@
 
         // Show auth views
         function showAuthView() {
+            console.log('Showing auth view');
             elements.authViews.style.display = 'flex';
             elements.appView.style.display = 'none';
             elements.authButtons.style.display = 'flex';
@@ -1066,6 +1070,7 @@
 
         // Show app view
         function showAppView() {
+            console.log('Showing app view');
             elements.authViews.style.display = 'none';
             elements.appView.style.display = 'block';
             elements.authButtons.style.display = 'none';
@@ -1084,6 +1089,7 @@
         function showSignupView() {
             elements.signupView.style.display = 'flex';
             elements.loginView.style.display = 'none';
+            elements.passwordMatchError.style.display = 'none';
         }
 
         // Show login view
@@ -1106,6 +1112,18 @@
                 showSignupView();
             });
             
+            // Password confirmation validation
+            elements.signupConfirm.addEventListener('input', () => {
+                const password = elements.signupPassword.value;
+                const confirm = elements.signupConfirm.value;
+                
+                if (password !== confirm && confirm.length >= 6) {
+                    elements.passwordMatchError.style.display = 'block';
+                } else {
+                    elements.passwordMatchError.style.display = 'none';
+                }
+            });
+            
             // Auth forms
             elements.signupForm.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -1115,6 +1133,7 @@
                 
                 // Form validation
                 if (password !== confirm) {
+                    elements.passwordMatchError.style.display = 'block';
                     showToast('Passwords do not match', 'error');
                     return;
                 }
@@ -1173,40 +1192,46 @@
 
         // Sign up with email/password
         function signUpWithEmail(email, password) {
+            console.log('Signing up:', email);
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Clear form and show success message
+                    // Reset form and show success message
                     elements.signupForm.reset();
+                    elements.passwordMatchError.style.display = 'none';
                     showToast('Account created successfully!', 'success');
+                    
                     if (analytics) {
                         analytics.logEvent('sign_up', { method: 'email' });
                     }
                 })
                 .catch((error) => {
-                    showToast(error.message, 'error');
                     console.error('Sign up error:', error);
+                    showToast(error.message, 'error');
                 });
         }
 
         // Sign in with email/password
         function signInWithEmail(email, password) {
+            console.log('Signing in:', email);
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Clear form and show success message
+                    // Reset form and show success message
                     elements.loginForm.reset();
                     showToast('Login successful!', 'success');
+                    
                     if (analytics) {
                         analytics.logEvent('login', { method: 'email' });
                     }
                 })
                 .catch((error) => {
-                    showToast(error.message, 'error');
                     console.error('Sign in error:', error);
+                    showToast(error.message, 'error');
                 });
         }
 
         // Sign in with Google
         function signInWithGoogle() {
+            console.log('Signing in with Google');
             const provider = new firebase.auth.GoogleAuthProvider();
             auth.signInWithPopup(provider)
                 .then((result) => {
@@ -1216,8 +1241,8 @@
                     }
                 })
                 .catch((error) => {
-                    showToast(error.message, 'error');
                     console.error('Google sign in error:', error);
+                    showToast(error.message, 'error');
                 });
         }
 
@@ -1228,6 +1253,7 @@
                     showToast('You have been signed out', 'info');
                 })
                 .catch((error) => {
+                    console.error('Sign out error:', error);
                     showToast(error.message, 'error');
                 });
         }
@@ -1237,6 +1263,7 @@
             if (!state.currentUser) return;
             
             const userId = state.currentUser.uid;
+            console.log('Loading user data for:', userId);
             
             // Load loans
             db.collection('users').doc(userId).collection('loans').get()
@@ -1251,6 +1278,7 @@
                     }
                 })
                 .catch((error) => {
+                    console.error('Error loading loans:', error);
                     showToast('Error loading loans: ' + error.message, 'error');
                 });
             
@@ -1264,6 +1292,7 @@
                     renderPaymentHistory();
                 })
                 .catch((error) => {
+                    console.error('Error loading payments:', error);
                     showToast('Error loading payments: ' + error.message, 'error');
                 });
         }
@@ -1303,6 +1332,7 @@
                     }
                 })
                 .catch((error) => {
+                    console.error('Error adding loan:', error);
                     showToast('Error adding loan: ' + error.message, 'error');
                 });
         }
@@ -1453,6 +1483,7 @@
                     }
                 })
                 .catch((error) => {
+                    console.error('Error recording payment:', error);
                     showToast('Error recording payment: ' + error.message, 'error');
                 });
         }
@@ -1605,6 +1636,7 @@
                     }
                 })
                 .catch((error) => {
+                    console.error('Error removing loan:', error);
                     showToast('Error removing loan: ' + error.message, 'error');
                 });
         }
@@ -1632,6 +1664,7 @@
                     }
                 })
                 .catch((error) => {
+                    console.error('Error resetting loans:', error);
                     showToast('Error resetting loans: ' + error.message, 'error');
                 });
         }
