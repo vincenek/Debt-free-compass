@@ -2,7 +2,7 @@
   "name": "DebtFree Compass",
   "short_name": "DebtFree",
   "description": "An innovative loan & debt reduction web app",
-  "start_url": "https://vincenek.github.io/Debt-free-compass/",
+  "start_url": "https://vincenek.github.io/Debt-free-compass/?",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
