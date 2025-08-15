@@ -8,12 +8,12 @@
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "https://i.postimg.cc/hj4FSyGM/web-app-manifest-192x192.png",
+      "src": "https://i.postimg.cc/Pq0yT6nj/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://i.postimg.cc/0yfRL1kr/web-app-manifest-512x512.png",
+      "src": "https://i.postimg.cc/C57bB7Xd/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
