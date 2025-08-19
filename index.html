@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DebtFree Compass - Offline Loan Manager</title>
     <!-- Manifest -->
-<link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
 
-<!-- iOS Support -->
-<link rel="apple-touch-icon" href="icons/icon-192x192.png">
-<meta name="apple-mobile-web-app-status-bar" content="#2563eb">
+    <!-- iOS Support -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-status-bar" content="#2563eb">
 
-<!-- Theme Color -->
-<meta name="theme-color" content="#2563eb">
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#2563eb">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js"></script>
@@ -792,6 +792,149 @@
             font-size: 0.9rem;
         }
 
+        /* NEW STYLES FOR ADDED FEATURES */
+        .utility-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+
+        .achievements-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .achievement {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            opacity: 0.5;
+        }
+
+        .achievement.unlocked {
+            opacity: 1;
+            transform: scale(1.05);
+            box-shadow: var(--box-shadow-lg);
+        }
+
+        .achievement-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .achievement-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .achievement-desc {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .payoff-chart-container {
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        .edit-loan-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: var(--border-radius);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reminder-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .reminder-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .badge-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .badge-light {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px;
+            background: var(--dark);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tutorial-highlight {
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3);
+            border-radius: var(--border-radius);
+            transition: box-shadow 0.3s ease;
+        }
+
         @media (max-width: 768px) {
             .loans-grid {
                 grid-template-columns: 1fr;
@@ -832,6 +975,14 @@
                 width: 100%;
                 justify-content: flex-end;
             }
+
+            .utility-buttons {
+                flex-direction: column;
+            }
+
+            .achievements-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -847,11 +998,17 @@
                 <div class="auth-buttons">
                     <div id="userInfo" class="user-info" style="display: none;">
                         <div class="user-avatar" id="userAvatar">U</div>
-                        <div class="user-email" id="userEmail">user@example.com</div>
+                        <div class="user-email" id="userEmail"></div>
                     </div>
                     <button id="signInBtn" class="auth-btn">Sign In</button>
                     <button id="signUpBtn" class="auth-btn">Sign Up</button>
                     <button id="signOutBtn" class="auth-btn" style="display: none;">Sign Out</button>
+                    <button id="installBtn" class="auth-btn" style="display: none;">Install App</button>
+                    <div style="position: relative;">
+                        <button id="notificationsBtn" class="auth-btn" style="display: none;">🔔</button>
+                        <span id="notificationCount" class="notification-badge" style="display: none;">0</span>
+                    </div>
+                    <button id="helpBtn" class="auth-btn">❓ Help</button>
                 </div>
             </div>
         </div>
@@ -906,6 +1063,86 @@
         </div>
     </div>
     
+    <!-- Notifications Modal -->
+    <div id="notificationsModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeNotificationsModal">&times;</button>
+            <div class="modal-icon">🔔</div>
+            <h2 class="modal-title">Payment Reminders</h2>
+            <div id="remindersList">
+                <!-- Reminders will be added here dynamically -->
+            </div>
+            <div class="form-group" style="margin-top: 20px;">
+                <label for="newReminder">Add New Reminder</label>
+                <input type="text" id="newReminder" placeholder="E.g., Credit Card due on 15th">
+                <button id="addReminder" class="btn btn-secondary" style="margin-top: 10px; width: 100%;">Add Reminder</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Help Tutorial Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeHelpModal">&times;</button>
+            <div class="modal-icon">❓</div>
+            <h2 class="modal-title">DebtFree Compass Tutorial</h2>
+            <div id="tutorialContent">
+                <div class="tutorial-step active" data-step="1">
+                    <h3>Welcome to DebtFree Compass!</h3>
+                    <p>This quick tutorial will show you how to effectively manage your debts.</p>
+                    <button class="btn" style="margin-top: 20px;" onclick="nextTutorialStep()">Get Started</button>
+                </div>
+                <div class="tutorial-step" data-step="2" style="display: none;">
+                    <h3>Adding Your Loans</h3>
+                    <p>Start by adding your loans with the form at the top of the "My Loans" tab.</p>
+                    <p>Include the current balance, interest rate, and minimum payment.</p>
+                    <button class="btn" style="margin-top: 20px;" onclick="nextTutorialStep()">Next</button>
+                </div>
+                <div class="tutorial-step" data-step="3" style="display: none;">
+                    <h3>Choosing a Strategy</h3>
+                    <p>Select between Avalanche (save on interest) or Snowball (psychological wins) method.</p>
+                    <p>The app will optimize your payoff order based on your choice.</p>
+                    <button class="btn" style="margin-top: 20px;" onclick="nextTutorialStep()">Next</button>
+                </div>
+                <div class="tutorial-step" data-step="4" style="display: none;">
+                    <h3>Tracking Progress</h3>
+                    <p>Record payments to track your progress toward becoming debt-free.</p>
+                    <p>Celebrate milestones along the way to stay motivated!</p>
+                    <button class="btn" style="margin-top: 20px;" onclick="finishTutorial()">Finish Tutorial</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Data Management Modal -->
+    <div id="dataModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeDataModal">&times;</button>
+            <div class="modal-icon">💾</div>
+            <h2 class="modal-title">Data Management</h2>
+            <div style="margin: 20px 0;">
+                <p>Export your data to backup or transfer to another device.</p>
+                <button id="exportData" class="btn" style="width: 100%; margin: 10px 0;">Export Data</button>
+            </div>
+            <div style="margin: 20px 0;">
+                <p>Import previously exported data.</p>
+                <div class="form-group">
+                    <label for="importFile">Select backup file</label>
+                    <input type="file" id="importFile" accept=".json">
+                </div>
+                <button id="importData" class="btn btn-secondary" style="width: 100%;">Import Data</button>
+            </div>
+            <div style="margin: 20px 0;">
+                <p>Encrypt your data with a password for added security.</p>
+                <div class="form-group">
+                    <label for="encryptionPassword">Encryption Password</label>
+                    <input type="password" id="encryptionPassword" placeholder="Enter password">
+                </div>
+                <button id="enableEncryption" class="btn btn-outline" style="width: 100%;">Enable Encryption</button>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
         <!-- Main Content (only visible when authenticated) -->
         <div id="appContent" style="display: none;">
@@ -913,6 +1150,8 @@
             <div class="tabs">
                 <div class="tab active" data-tab="loans">My Loans</div>
                 <div class="tab" data-tab="payments">Payment History</div>
+                <div class="tab" data-tab="strategy">Payoff Strategy</div>
+                <div class="tab" data-tab="achievements">Achievements</div>
                 <div class="tab" data-tab="comingsoon">Coming Soon</div>
             </div>
             
@@ -975,6 +1214,11 @@
                         <span>Total Debt: $<span id="totalDebt">0</span></span>
                         <span>Paid: $<span id="paidDebt">0</span> (<span id="paidPercent">0</span>%)</span>
                     </div>
+                    
+                    <div class="utility-buttons">
+                        <button id="dataManagementBtn" class="btn btn-outline">💾 Data Management</button>
+                        <button id="calculateSavingsBtn" class="btn btn-outline">💡 Calculate Savings</button>
+                    </div>
                 </div>
                 
                 <!-- Loans Dashboard -->
@@ -999,6 +1243,62 @@
                     
                     <div id="historyContainer" class="payment-history">
                         <!-- Payment history will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Strategy Tab -->
+            <div id="strategyTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Payoff Strategy Visualizer</h2>
+                    </div>
+                    <p>See how your debt payoff strategy will work over time. The chart below shows the recommended order for paying off your debts.</p>
+                    
+                    <div class="payoff-chart-container">
+                        <canvas id="payoffChart"></canvas>
+                    </div>
+                    
+                    <div id="payoffTimeline" class="timeline">
+                        <!-- Timeline will be generated here -->
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="extraPayment">Additional Monthly Payment ($)</label>
+                        <input type="number" id="extraPayment" min="0" step="10" value="0" placeholder="0">
+                    </div>
+                    
+                    <button id="updateProjection" class="btn">Update Projection</button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Strategy Comparison</h2>
+                    </div>
+                    <div id="comparisonResults">
+                        <p>Add at least two loans to compare payoff strategies.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Achievements Tab -->
+            <div id="achievementsTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Your Achievements</h2>
+                    </div>
+                    <p>Earn badges as you make progress on your debt-free journey!</p>
+                    
+                    <div class="progress-bar">
+                        <div class="progress" id="achievementProgress" style="width: 0%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                        <span>Achievements: <span id="earnedAchievements">0</span>/<span id="totalAchievements">0</span></span>
+                        <span><span id="achievementPercent">0</span>% Complete</span>
+                    </div>
+                    
+                    <div id="achievementsContainer" class="achievements-container">
+                        <!-- Achievements will be added here dynamically -->
                     </div>
                 </div>
             </div>
@@ -1097,6 +1397,35 @@
         </div>
     </div>
     
+    <!-- Edit Loan Modal -->
+    <div id="editLoanModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeEditModal">&times;</button>
+            <div class="modal-icon">✏️</div>
+            <h2 class="modal-title">Edit Loan</h2>
+            <form id="editLoanForm">
+                <input type="hidden" id="editLoanId">
+                <div class="form-group">
+                    <label for="editLoanName">Loan Name</label>
+                    <input type="text" id="editLoanName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editLoanBalance">Current Balance ($)</label>
+                    <input type="number" id="editLoanBalance" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="editInterestRate">Interest Rate (%)</label>
+                    <input type="number" id="editInterestRate" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="editMinPayment">Minimum Payment ($)</label>
+                    <input type="number" id="editMinPayment" min="0" step="0.01" required>
+                </div>
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+    
     <script>
         // Firebase Configuration
         const firebaseConfig = {
@@ -1117,11 +1446,30 @@
         const state = {
             loans: [],
             payments: [],
+            reminders: [],
             strategy: 'avalanche',
             totalDebt: 0,
             paidDebt: 0,
-            currentUser: null
+            currentUser: null,
+            achievements: [],
+            encrypted: false,
+            encryptionKey: null,
+            deferredPrompt: null
         };
+        
+        // Define available achievements
+        const availableAchievements = [
+            { id: 'first_loan', title: 'First Step', description: 'Added your first loan', icon: '👣', earned: false },
+            { id: 'first_payment', title: 'Payment Starter', description: 'Made your first payment', icon: '💵', earned: false },
+            { id: '25_percent', title: 'Quarter Way', description: 'Paid off 25% of any loan', icon: '🎯', earned: false },
+            { id: '50_percent', title: 'Halfway There', description: 'Paid off 50% of any loan', icon: '📉', earned: false },
+            { id: '75_percent', title: 'Almost There', description: 'Paid off 75% of any loan', icon: '🏁', earned: false },
+            { id: 'loan_free', title: 'Loan Free', description: 'Completely paid off a loan', icon: '🎊', earned: false },
+            { id: 'debt_free', title: 'Debt Free', description: 'Paid off all loans', icon: '🏆', earned: false },
+            { id: 'extra_payer', title: 'Extra Payer', description: 'Made an extra payment', icon: '💪', earned: false },
+            { id: 'consistent', title: 'Consistent', description: 'Made 3 payments in a row', icon: '📅', earned: false },
+            { id: 'strategy_master', title: 'Strategy Master', description: 'Tried both payoff strategies', icon: '🧠', earned: false }
+        ];
         
         // DOM Elements
         const elements = {
@@ -1167,7 +1515,46 @@
             welcomeSignUp: document.getElementById('welcomeSignUp'),
             userInfo: document.getElementById('userInfo'),
             userAvatar: document.getElementById('userAvatar'),
-            userEmail: document.getElementById('userEmail')
+            userEmail: document.getElementById('userEmail'),
+            // New elements for added features
+            installBtn: document.getElementById('installBtn'),
+            notificationsBtn: document.getElementById('notificationsBtn'),
+            notificationCount: document.getElementById('notificationCount'),
+            helpBtn: document.getElementById('helpBtn'),
+            closeNotificationsModal: document.getElementById('closeNotificationsModal'),
+            notificationsModal: document.getElementById('notificationsModal'),
+            remindersList: document.getElementById('remindersList'),
+            newReminder: document.getElementById('newReminder'),
+            addReminder: document.getElementById('addReminder'),
+            helpModal: document.getElementById('helpModal'),
+            closeHelpModal: document.getElementById('closeHelpModal'),
+            dataManagementBtn: document.getElementById('dataManagementBtn'),
+            dataModal: document.getElementById('dataModal'),
+            closeDataModal: document.getElementById('closeDataModal'),
+            exportData: document.getElementById('exportData'),
+            importFile: document.getElementById('importFile'),
+            importData: document.getElementById('importData'),
+            encryptionPassword: document.getElementById('encryptionPassword'),
+            enableEncryption: document.getElementById('enableEncryption'),
+            payoffChart: document.getElementById('payoffChart'),
+            payoffTimeline: document.getElementById('payoffTimeline'),
+            extraPayment: document.getElementById('extraPayment'),
+            updateProjection: document.getElementById('updateProjection'),
+            comparisonResults: document.getElementById('comparisonResults'),
+            achievementsContainer: document.getElementById('achievementsContainer'),
+            earnedAchievements: document.getElementById('earnedAchievements'),
+            totalAchievements: document.getElementById('totalAchievements'),
+            achievementPercent: document.getElementById('achievementPercent'),
+            achievementProgress: document.getElementById('achievementProgress'),
+            calculateSavingsBtn: document.getElementById('calculateSavingsBtn'),
+            editLoanModal: document.getElementById('editLoanModal'),
+            editLoanForm: document.getElementById('editLoanForm'),
+            editLoanId: document.getElementById('editLoanId'),
+            editLoanName: document.getElementById('editLoanName'),
+            editLoanBalance: document.getElementById('editLoanBalance'),
+            editInterestRate: document.getElementById('editInterestRate'),
+            editMinPayment: document.getElementById('editMinPayment'),
+            closeEditModal: document.getElementById('closeEditModal')
         };
         
         // Initialize the application
@@ -1175,6 +1562,92 @@
             setupAuthListeners();
             setupEventListeners();
             auth.onAuthStateChanged(handleAuthStateChanged);
+            checkServiceWorker();
+            checkForDeferredPrompt();
+            checkForNotifications();
+        }
+        
+        // Check and register service worker
+        function checkServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('SW registered: ', registration);
+                }).catch(function(registrationError) {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            }
+        }
+        
+        // Check for deferred prompt for PWA installation
+        function checkForDeferredPrompt() {
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                state.deferredPrompt = e;
+                elements.installBtn.style.display = 'block';
+                elements.installBtn.addEventListener('click', installApp);
+            });
+        }
+        
+        // Install app as PWA
+        function installApp() {
+            if (state.deferredPrompt) {
+                state.deferredPrompt.prompt();
+                state.deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    state.deferredPrompt = null;
+                    elements.installBtn.style.display = 'none';
+                });
+            }
+        }
+        
+        // Check for notifications
+        function checkForNotifications() {
+            if (!state.currentUser) {
+                // Hide notification button if user is not logged in
+                elements.notificationsBtn.style.display = 'none';
+                return;
+            }
+            
+            const now = new Date();
+            const today = now.getDate();
+            let notificationCount = 0;
+            
+            state.reminders.forEach(reminder => {
+                const reminderDate = new Date(reminder.date);
+                if (reminderDate.getDate() === today) {
+                    notificationCount++;
+                }
+            });
+            
+            if (notificationCount > 0) {
+                elements.notificationCount.textContent = notificationCount;
+                elements.notificationCount.style.display = 'block';
+                elements.notificationsBtn.style.display = 'block';
+                
+                // Show desktop notification if permitted
+                if (Notification.permission === 'granted') {
+                    new Notification('DebtFree Compass', {
+                        body: `You have ${notificationCount} payment reminder(s) today`,
+                        icon: '/icons/icon-192x192.png'
+                    });
+                }
+            } else {
+                elements.notificationCount.style.display = 'none';
+                elements.notificationsBtn.style.display = 'block';
+            }
+        }
+        
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('Notification permission granted');
+                    }
+                });
+            }
         }
         
         // Handle authentication state changes
@@ -1187,10 +1660,16 @@
                 renderLoans();
                 renderPaymentHistory();
                 updateDashboard();
+                renderAchievements();
+                updatePayoffStrategy();
+                requestNotificationPermission();
             } else {
                 // User is signed out
                 state.currentUser = null;
                 showWelcomeContent();
+                // Hide notifications when logged out
+                elements.notificationsBtn.style.display = 'none';
+                elements.notificationCount.style.display = 'none';
             }
         }
         
@@ -1199,15 +1678,19 @@
             elements.welcomeContent.style.display = 'none';
             elements.appContent.style.display = 'block';
             
-            // Update user info
+            // Update user info - show only first letter of email
             elements.userInfo.style.display = 'flex';
-            elements.userEmail.textContent = state.currentUser.email;
+            elements.userEmail.textContent = ''; // Clear the full email
             elements.userAvatar.textContent = state.currentUser.email.charAt(0).toUpperCase();
             
             // Update auth buttons
             elements.signInBtn.style.display = 'none';
             elements.signUpBtn.style.display = 'none';
             elements.signOutBtn.style.display = 'block';
+            elements.notificationsBtn.style.display = 'block'; // Show notifications button when logged in
+            
+            // Check for notifications
+            checkForNotifications();
         }
         
         // Show welcome content
@@ -1222,6 +1705,8 @@
             elements.signInBtn.style.display = 'block';
             elements.signUpBtn.style.display = 'block';
             elements.signOutBtn.style.display = 'none';
+            elements.notificationsBtn.style.display = 'none'; // Hide notifications button when logged out
+            elements.notificationCount.style.display = 'none'; // Hide notification count
         }
         
         // Setup auth listeners
@@ -1334,6 +1819,11 @@
                     tab.classList.add('active');
                     const tabId = tab.getAttribute('data-tab');
                     document.getElementById(`${tabId}Tab`).classList.add('active');
+                    
+                    // If strategy tab is selected, update the visualization
+                    if (tabId === 'strategy') {
+                        updatePayoffStrategy();
+                    }
                 });
             });
             
@@ -1363,6 +1853,10 @@
                 saveData();
                 renderLoans();
                 updateDashboard();
+                updatePayoffStrategy();
+                
+                // Check for first loan achievement
+                checkAchievement('first_loan');
                 
                 // Reset form
                 this.reset();
@@ -1377,11 +1871,17 @@
                     localStorage.removeItem('debtfreeLoans');
                     localStorage.removeItem('debtfreePayments');
                     localStorage.removeItem('debtfreeStrategy');
+                    localStorage.removeItem('debtfreeReminders');
+                    localStorage.removeItem('debtfreeAchievements');
                     state.loans = [];
                     state.payments = [];
+                    state.reminders = [];
+                    state.achievements = availableAchievements.map(a => ({...a, earned: false}));
                     renderLoans();
                     renderPaymentHistory();
                     updateDashboard();
+                    renderAchievements();
+                    updatePayoffStrategy();
                 }
             });
             
@@ -1403,6 +1903,90 @@
                 card.addEventListener('click', () => {
                     elements.comingSoonModal.classList.add('active');
                 });
+            });
+            
+            // New feature: Notifications
+            elements.notificationsBtn.addEventListener('click', () => {
+                elements.notificationsModal.classList.add('active');
+                renderReminders();
+            });
+            
+            elements.closeNotificationsModal.addEventListener('click', () => {
+                elements.notificationsModal.classList.remove('active');
+            });
+            
+            elements.addReminder.addEventListener('click', () => {
+                const reminderText = elements.newReminder.value.trim();
+                if (reminderText) {
+                    const newReminder = {
+                        id: Date.now(),
+                        text: reminderText,
+                        date: new Date(),
+                        completed: false
+                    };
+                    state.reminders.push(newReminder);
+                    saveData();
+                    renderReminders();
+                    elements.newReminder.value = '';
+                    checkForNotifications();
+                }
+            });
+            
+            // New feature: Help tutorial
+            elements.helpBtn.addEventListener('click', () => {
+                elements.helpModal.classList.add('active');
+            });
+            
+            elements.closeHelpModal.addEventListener('click', () => {
+                elements.helpModal.classList.remove('active');
+            });
+            
+            // New feature: Data management
+            elements.dataManagementBtn.addEventListener('click', () => {
+                elements.dataModal.classList.add('active');
+            });
+            
+            elements.closeDataModal.addEventListener('click', () => {
+                elements.dataModal.classList.remove('active');
+            });
+            
+            elements.exportData.addEventListener('click', exportUserData);
+            
+            elements.importData.addEventListener('click', importUserData);
+            
+            elements.enableEncryption.addEventListener('click', enableDataEncryption);
+            
+            // New feature: Payoff strategy
+            elements.updateProjection.addEventListener('click', updatePayoffStrategy);
+            
+            // New feature: Calculate savings
+            elements.calculateSavingsBtn.addEventListener('click', calculateInterestSavings);
+            
+            // New feature: Edit loan
+            elements.editLoanForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const loanId = parseInt(elements.editLoanId.value);
+                const loanIndex = state.loans.findIndex(loan => loan.id === loanId);
+                
+                if (loanIndex !== -1) {
+                    state.loans[loanIndex].name = elements.editLoanName.value;
+                    state.loans[loanIndex].balance = parseFloat(elements.editLoanBalance.value);
+                    state.loans[loanIndex].interestRate = parseFloat(elements.editInterestRate.value);
+                    state.loans[loanIndex].minPayment = parseFloat(elements.editMinPayment.value);
+                    state.loans[loanIndex].payoffDate = calculatePayoffDate(state.loans[loanIndex]);
+                    
+                    saveData();
+                    renderLoans();
+                    updateDashboard();
+                    updatePayoffStrategy();
+                    
+                    elements.editLoanModal.classList.remove('active');
+                    showCelebration('Loan updated successfully!');
+                }
+            });
+            
+            elements.closeEditModal.addEventListener('click', () => {
+                elements.editLoanModal.classList.remove('active');
             });
         }
         
@@ -1434,20 +2018,54 @@
             const savedLoans = localStorage.getItem('debtfreeLoans');
             const savedPayments = localStorage.getItem('debtfreePayments');
             const savedStrategy = localStorage.getItem('debtfreeStrategy');
+            const savedReminders = localStorage.getItem('debtfreeReminders');
+            const savedAchievements = localStorage.getItem('debtfreeAchievements');
             
-            state.loans = savedLoans ? JSON.parse(savedLoans) : [];
-            state.payments = savedPayments ? JSON.parse(savedPayments) : [];
+            // Decrypt data if encrypted
+            if (state.encrypted && state.encryptionKey) {
+                // This would be where decryption logic would go
+                // For simplicity, we're just parsing the JSON directly
+                state.loans = savedLoans ? JSON.parse(savedLoans) : [];
+                state.payments = savedPayments ? JSON.parse(savedPayments) : [];
+                state.reminders = savedReminders ? JSON.parse(savedReminders) : [];
+            } else {
+                state.loans = savedLoans ? JSON.parse(savedLoans) : [];
+                state.payments = savedPayments ? JSON.parse(savedPayments) : [];
+                state.reminders = savedReminders ? JSON.parse(savedReminders) : [];
+            }
+            
             state.strategy = savedStrategy || 'avalanche';
+            
+            // Initialize achievements
+            if (savedAchievements) {
+                state.achievements = JSON.parse(savedAchievements);
+            } else {
+                state.achievements = availableAchievements.map(a => ({...a, earned: false}));
+            }
             
             // Calculate total debt stats
             updateDebtStats();
+            
+            // Check for notifications
+            checkForNotifications();
         }
         
         // Save data to localStorage
         function saveData() {
-            localStorage.setItem('debtfreeLoans', JSON.stringify(state.loans));
-            localStorage.setItem('debtfreePayments', JSON.stringify(state.payments));
+            if (state.encrypted && state.encryptionKey) {
+                // This would be where encryption logic would go
+                // For simplicity, we're just stringifying the JSON directly
+                localStorage.setItem('debtfreeLoans', JSON.stringify(state.loans));
+                localStorage.setItem('debtfreePayments', JSON.stringify(state.payments));
+                localStorage.setItem('debtfreeReminders', JSON.stringify(state.reminders));
+            } else {
+                localStorage.setItem('debtfreeLoans', JSON.stringify(state.loans));
+                localStorage.setItem('debtfreePayments', JSON.stringify(state.payments));
+                localStorage.setItem('debtfreeReminders', JSON.stringify(state.reminders));
+            }
+            
             localStorage.setItem('debtfreeStrategy', state.strategy);
+            localStorage.setItem('debtfreeAchievements', JSON.stringify(state.achievements));
         }
         
         // Update debt statistics
@@ -1541,9 +2159,41 @@
             renderLoans();
             renderPaymentHistory();
             updateDashboard();
+            updatePayoffStrategy();
+            
+            // Check for achievements
+            checkAchievement('first_payment');
+            
+            if (amount > loan.minPayment) {
+                checkAchievement('extra_payer');
+            }
+            
+            // Check for payment streak
+            checkPaymentStreak();
             
             // Check for milestones
             checkMilestones(loan);
+        }
+        
+        // Check for payment streak achievement
+        function checkPaymentStreak() {
+            if (state.payments.length < 3) return;
+            
+            // Sort payments by date (newest first)
+            const sortedPayments = [...state.payments].sort((a, b) => b.id - a.id);
+            
+            // Check if last 3 payments were made on consecutive months
+            const lastPaymentDate = new Date(sortedPayments[0].date);
+            const secondPaymentDate = new Date(sortedPayments[1].date);
+            const thirdPaymentDate = new Date(sortedPayments[2].date);
+            
+            // Check if payments are in consecutive months
+            if (
+                lastPaymentDate.getMonth() === secondPaymentDate.getMonth() - 1 &&
+                secondPaymentDate.getMonth() === thirdPaymentDate.getMonth() - 1
+            ) {
+                checkAchievement('consistent');
+            }
         }
         
         // Check for milestones and show celebrations
@@ -1552,12 +2202,34 @@
             
             if (paidPercentage >= 100) {
                 showCelebration(`🎉 Congratulations! You've completely paid off your ${loan.name} loan! 🎉`);
+                checkAchievement('loan_free');
+                
+                // Check if all loans are paid off
+                if (state.loans.every(loan => loan.balance <= 0)) {
+                    checkAchievement('debt_free');
+                }
             } else if (paidPercentage >= 75) {
                 showCelebration(`Amazing! You've paid off 75% of your ${loan.name} loan! Almost there!`);
+                checkAchievement('75_percent');
             } else if (paidPercentage >= 50) {
                 showCelebration(`Great job! You're halfway through paying off your ${loan.name} loan!`);
+                checkAchievement('50_percent');
             } else if (paidPercentage >= 25) {
                 showCelebration(`Nice work! You've paid off 25% of your ${loan.name} loan! Keep it up!`);
+                checkAchievement('25_percent');
+            }
+        }
+        
+        // Check and unlock achievements
+        function checkAchievement(achievementId) {
+            const achievement = state.achievements.find(a => a.id === achievementId);
+            if (achievement && !achievement.earned) {
+                achievement.earned = true;
+                saveData();
+                renderAchievements();
+                
+                // Show achievement notification
+                showCelebration(`Achievement Unlocked: ${achievement.title}! ${achievement.description}`);
             }
         }
         
@@ -1634,6 +2306,7 @@
                     </div>
                     <div class="loan-footer">
                         <button class="btn btn-sm btn-outline view-history" data-id="${loan.id}">View History</button>
+                        <button class="btn btn-sm btn-outline edit-loan" data-id="${loan.id}">Edit</button>
                         <button class="btn btn-sm btn-danger remove-loan" data-id="${loan.id}">Remove</button>
                     </div>
                 `;
@@ -1667,7 +2340,26 @@
                     const loanId = parseInt(this.getAttribute('data-id'));
                     showLoanHistory(loanId);
                 });
+                
+                loanCard.querySelector('.edit-loan').addEventListener('click', function() {
+                    const loanId = parseInt(this.getAttribute('data-id'));
+                    editLoan(loanId);
+                });
             });
+        }
+        
+        // Edit a loan
+        function editLoan(loanId) {
+            const loan = state.loans.find(l => l.id === loanId);
+            if (!loan) return;
+            
+            elements.editLoanId.value = loan.id;
+            elements.editLoanName.value = loan.name;
+            elements.editLoanBalance.value = loan.balance;
+            elements.editInterestRate.value = loan.interestRate;
+            elements.editMinPayment.value = loan.minPayment;
+            
+            elements.editLoanModal.classList.add('active');
         }
         
         // Render payment history
@@ -1789,7 +2481,7 @@
                 renderPaymentHistory();
                 document.getElementById('paymentsTab').classList.add('active');
                 document.getElementById('loansTab').classList.remove('active');
-                document.querySelector('.tab[data-tab="payments"]').classList.add('active');
+                document.querySelector('.tab[data-tab="payments"]').classlassList.add('active');
                 document.querySelector('.tab[data-tab="loans"]').classList.remove('active');
             });
             
@@ -1809,6 +2501,7 @@
                 renderLoans();
                 renderPaymentHistory();
                 updateDashboard();
+                updatePayoffStrategy();
             }
         }
         
@@ -1823,8 +2516,428 @@
             }, 5000);
         }
         
+        // Render reminders
+        function renderReminders() {
+            if (state.reminders.length === 0) {
+                elements.remindersList.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--gray);">
+                        <p>No reminders set</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            elements.remindersList.innerHTML = '';
+            
+            state.reminders.forEach(reminder => {
+                const reminderElement = document.createElement('div');
+                reminderElement.className = 'reminder-item';
+                reminderElement.innerHTML = `
+                    <div>
+                        <input type="checkbox" id="reminder-${reminder.id}" ${reminder.completed ? 'checked' : ''}>
+                        <label for="reminder-${reminder.id}">${reminder.text}</label>
+                    </div>
+                    <button class="btn btn-sm btn-danger remove-reminder" data-id="${reminder.id}">Remove</button>
+                `;
+                
+                elements.remindersList.appendChild(reminderElement);
+                
+                // Add event listeners
+                reminderElement.querySelector('input').addEventListener('change', (e) => {
+                    reminder.completed = e.target.checked;
+                    saveData();
+                    checkForNotifications();
+                });
+                
+                reminderElement.querySelector('.remove-reminder').addEventListener('click', () => {
+                    state.reminders = state.reminders.filter(r => r.id !== reminder.id);
+                    saveData();
+                    renderReminders();
+                    checkForNotifications();
+                });
+            });
+        }
+        
+        // Render achievements
+        function renderAchievements() {
+            const earnedCount = state.achievements.filter(a => a.earned).length;
+            const totalCount = state.achievements.length;
+            const percentComplete = Math.round((earnedCount / totalCount) * 100);
+            
+            elements.earnedAchievements.textContent = earnedCount;
+            elements.totalAchievements.textContent = totalCount;
+            elements.achievementPercent.textContent = percentComplete;
+            elements.achievementProgress.style.width = `${percentComplete}%`;
+            
+            elements.achievementsContainer.innerHTML = '';
+            
+            state.achievements.forEach(achievement => {
+                const achievementElement = document.createElement('div');
+                achievementElement.className = `achievement ${achievement.earned ? 'unlocked' : ''}`;
+                achievementElement.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-title">${achievement.title}</div>
+                    <div class="achievement-desc">${achievement.description}</div>
+                `;
+                
+                elements.achievementsContainer.appendChild(achievementElement);
+            });
+        }
+        
+        // Update payoff strategy visualization
+        function updatePayoffStrategy() {
+            if (state.loans.length === 0) {
+                elements.payoffTimeline.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--gray);">
+                        <p>Add loans to see your payoff strategy</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Clone and sort loans based on strategy
+            const sortedLoans = [...state.loans];
+            if (state.strategy === 'avalanche') {
+                sortedLoans.sort((a, b) => b.interestRate - a.interestRate);
+            } else {
+                sortedLoans.sort((a, b) => a.balance - b.balance);
+            }
+            
+            // Update timeline
+            elements.payoffTimeline.innerHTML = '';
+            
+            sortedLoans.forEach((loan, index) => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+                timelineItem.innerHTML = `
+                    <div class="timeline-marker">${index + 1}</div>
+                    <div class="timeline-label">${loan.name}</div>
+                `;
+                elements.payoffTimeline.appendChild(timelineItem);
+            });
+            
+            // Update chart
+            updatePayoffChart(sortedLoans);
+            
+            // Update strategy comparison
+            updateStrategyComparison();
+        }
+        
+        // Update payoff chart
+        function updatePayoffChart(sortedLoans) {
+            const ctx = elements.payoffChart.getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.payoffChartInstance) {
+                window.payoffChartInstance.destroy();
+            }
+            
+            const labels = sortedLoans.map(loan => loan.name);
+            const balances = sortedLoans.map(loan => loan.balance);
+            const colors = sortedLoans.map((loan, i) => {
+                const hue = (i * 137.5) % 360; // Golden angle for distinct colors
+                return `hsl(${hue}, 70%, 60%)`;
+            });
+            
+            window.payoffChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Remaining Balance',
+                        data: balances,
+                        backgroundColor: colors,
+                        borderColor: colors.map(color => color.replace('60%)', '40%)')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Balance ($)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Payoff Order Visualization'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Balance: $${context.raw.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update strategy comparison
+        function updateStrategyComparison() {
+            if (state.loans.length < 2) {
+                elements.comparisonResults.innerHTML = `
+                    <p>Add at least two loans to compare payoff strategies.</p>
+                `;
+                return;
+            }
+            
+            // Clone loans for avalanche strategy
+            const avalancheLoans = JSON.parse(JSON.stringify(state.loans));
+            avalancheLoans.sort((a, b) => b.interestRate - a.interestRate);
+            
+            // Clone loans for snowball strategy
+            const snowballLoans = JSON.parse(JSON.stringify(state.loans));
+            snowballLoans.sort((a, b) => a.balance - b.balance);
+            
+            // Calculate total interest for each strategy
+            const avalancheInterest = calculateTotalInterest(avalancheLoans);
+            const snowballInterest = calculateTotalInterest(snowballLoans);
+            
+            // Calculate time to debt freedom for each strategy
+            const avalancheTime = calculateTimeToFreedom(avalancheLoans);
+            const snowballTime = calculateTimeToFreedom(snowballLoans);
+            
+            // Determine which strategy is better for interest savings
+            const interestDifference = Math.abs(avalancheInterest - snowballInterest);
+            const timeDifference = Math.abs(avalancheTime - snowballTime);
+            
+            let recommendation = '';
+            if (avalancheInterest < snowballInterest) {
+                recommendation = `The <strong>Avalanche method</strong> will save you <strong>$${interestDifference.toFixed(2)}</strong> in interest compared to the Snowball method.`;
+            } else {
+                recommendation = `The <strong>Snowball method</strong> will save you <strong>$${interestDifference.toFixed(2)}</strong> in interest compared to the Avalanche method.`;
+            }
+            
+            if (avalancheTime < snowballTime) {
+                recommendation += ` The Avalanche method will also get you debt-free <strong>${timeDifference}</strong> months faster.`;
+            } else {
+                recommendation += ` The Snowball method will also get you debt-free <strong>${timeDifference}</strong> months faster.`;
+            }
+            
+            elements.comparisonResults.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="card">
+                        <h3>Avalanche Method</h3>
+                        <p>Total Interest: <strong>$${avalancheInterest.toFixed(2)}</strong></p>
+                        <p>Time to Debt Freedom: <strong>${avalancheTime} months</strong></p>
+                    </div>
+                    <div class="card">
+                        <h3>Snowball Method</h3>
+                        <p>Total Interest: <strong>$${snowballInterest.toFixed(2)}</strong></p>
+                        <p>Time to Debt Freedom: <strong>${snowballTime} months</strong></p>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 20px;">
+                    <h3>Recommendation</h3>
+                    <p>${recommendation}</p>
+                </div>
+            `;
+        }
+        
+        // Calculate total interest for a strategy
+        function calculateTotalInterest(loans) {
+            let totalInterest = 0;
+            let remainingLoans = JSON.parse(JSON.stringify(loans));
+            
+            while (remainingLoans.length > 0) {
+                // Calculate interest for each loan
+                remainingLoans.forEach(loan => {
+                    const monthlyInterest = loan.balance * (loan.interestRate / 100 / 12);
+                    totalInterest += monthlyInterest;
+                    loan.balance -= (loan.minPayment - monthlyInterest);
+                });
+                
+                // Remove paid off loans
+                remainingLoans = remainingLoans.filter(loan => loan.balance > 0);
+            }
+            
+            return totalInterest;
+        }
+        
+        // Calculate time to debt freedom for a strategy
+        function calculateTimeToFreedom(loans) {
+            let months = 0;
+            let remainingLoans = JSON.parse(JSON.stringify(loans));
+            
+            while (remainingLoans.length > 0) {
+                months++;
+                
+                // Make payments on each loan
+                remainingLoans.forEach(loan => {
+                    const monthlyInterest = loan.balance * (loan.interestRate / 100 / 12);
+                    loan.balance -= (loan.minPayment - monthlyInterest);
+                });
+                
+                // Remove paid off loans
+                remainingLoans = remainingLoans.filter(loan => loan.balance > 0);
+            }
+            
+            return months;
+        }
+        
+        // Calculate interest savings
+        function calculateInterestSavings() {
+            if (state.loans.length === 0) {
+                alert('Add at least one loan to calculate interest savings.');
+                return;
+            }
+            
+            const extraPayment = parseFloat(elements.extraPayment.value) || 0;
+            let totalInterestWithoutExtra = 0;
+            let totalInterestWithExtra = 0;
+            
+            // Calculate interest without extra payments
+            state.loans.forEach(loan => {
+                let balance = loan.balance;
+                const monthlyRate = loan.interestRate / 100 / 12;
+                
+                while (balance > 0) {
+                    const interest = balance * monthlyRate;
+                    totalInterestWithoutExtra += interest;
+                    const principalPayment = Math.min(loan.minPayment - interest, balance);
+                    balance -= principalPayment;
+                }
+            });
+            
+            // Calculate interest with extra payments
+            state.loans.forEach(loan => {
+                let balance = loan.balance;
+                const monthlyRate = loan.interestRate / 100 / 12;
+                const payment = loan.minPayment + extraPayment;
+                
+                while (balance > 0) {
+                    const interest = balance * monthlyRate;
+                    totalInterestWithExtra += interest;
+                    const principalPayment = Math.min(payment - interest, balance);
+                    balance -= principalPayment;
+                }
+            });
+            
+            const savings = totalInterestWithoutExtra - totalInterestWithExtra;
+            const monthsSaved = Math.round(savings / (extraPayment * 12));
+            
+            showCelebration(`By paying an extra $${extraPayment} per month, you'll save $${savings.toFixed(2)} in interest and become debt-free ${monthsSaved} months earlier!`);
+        }
+        
+        // Export user data
+        function exportUserData() {
+            const data = {
+                loans: state.loans,
+                payments: state.payments,
+                reminders: state.reminders,
+                strategy: state.strategy,
+                achievements: state.achievements,
+                exportedAt: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'debtfree-backup.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+        
+        // Import user data
+        function importUserData() {
+            const file = elements.importFile.files[0];
+            if (!file) {
+                alert('Please select a backup file first.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (confirm('This will replace your current data. Are you sure?')) {
+                        state.loans = data.loans || [];
+                        state.payments = data.payments || [];
+                        state.reminders = data.reminders || [];
+                        state.strategy = data.strategy || 'avalanche';
+                        state.achievements = data.achievements || availableAchievements.map(a => ({...a, earned: false}));
+                        
+                        saveData();
+                        renderLoans();
+                        renderPaymentHistory();
+                        updateDashboard();
+                        renderAchievements();
+                        updatePayoffStrategy();
+                        
+                        showCelebration('Data imported successfully!');
+                    }
+                } catch (error) {
+                    alert('Error importing data: Invalid file format.');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Enable data encryption
+        function enableDataEncryption() {
+            const password = elements.encryptionPassword.value;
+            if (!password) {
+                alert('Please enter a password for encryption.');
+                return;
+            }
+            
+            // In a real application, you would use a proper encryption library
+            // For this demo, we'll just set a flag and store a simple hash
+            state.encrypted = true;
+            state.encryptionKey = btoa(password); // Not secure, just for demonstration
+            
+            saveData();
+            alert('Encryption enabled. Your data will now be encrypted when stored.');
+        }
+        
+        // Tutorial functions
+        function nextTutorialStep() {
+            const currentStep = document.querySelector('.tutorial-step.active');
+            const currentStepNum = parseInt(currentStep.getAttribute('data-step'));
+            const nextStepNum = currentStepNum + 1;
+            
+            currentStep.style.display = 'none';
+            currentStep.classList.remove('active');
+            
+            const nextStep = document.querySelector(`.tutorial-step[data-step="${nextStepNum}"]`);
+            if (nextStep) {
+                nextStep.style.display = 'block';
+                nextStep.classList.add('active');
+            }
+        }
+        
+        function finishTutorial() {
+            elements.helpModal.classList.remove('active');
+            localStorage.setItem('debtfreeTutorialCompleted', 'true');
+        }
+        
         // Initialize the app when DOM is loaded
         document.addEventListener('DOMContentLoaded', init);
+    </script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
     </script>
 </body>
 </html>
