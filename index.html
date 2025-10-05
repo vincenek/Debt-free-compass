@@ -1335,7 +1335,12 @@
                 
                 <div class="form-group">
                     <label for="signUpPassword">Password</label>
-                    <input type="password" id="signUpPassword" placeholder="Create a password (min 6 chars)" required>
+                    <input type="password" id="signUpPassword" placeholder="Create a password (min 6 chars)" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="signUpConfirmPassword">Confirm Password</label>
+                    <input type="password" id="signUpConfirmPassword" placeholder="Confirm your password" required minlength="6">
                 </div>
                 
                 <button id="signUpSubmit" class="btn" style="width: 100%;">Create Account</button>
@@ -1554,7 +1559,10 @@
                 email: '',
                 createdAt: null
             },
-            isOnline: navigator.onLine
+            isOnline: navigator.onLine,
+            // Add data persistence flags
+            dataLoaded: false,
+            pendingSave: false
         };
 
         // DOM Elements
@@ -1572,6 +1580,7 @@
             signUpName: document.getElementById('signUpName'),
             signUpEmail: document.getElementById('signUpEmail'),
             signUpPassword: document.getElementById('signUpPassword'),
+            signUpConfirmPassword: document.getElementById('signUpConfirmPassword'),
             userInfo: document.getElementById('userInfo'),
             userAvatar: document.getElementById('userAvatar'),
             userEmail: document.getElementById('userEmail'),
@@ -1672,6 +1681,7 @@
             setupEventListeners();
             setupAuthStateListener();
             checkOnlineStatus();
+            setupDataPersistence();
             
             // Check if user is already logged in
             const savedUser = localStorage.getItem('currentUser');
@@ -1684,6 +1694,7 @@
                 } catch (e) {
                     console.error('Error parsing saved user data:', e);
                     localStorage.removeItem('currentUser');
+                    showWelcomeContent();
                 }
             } else {
                 showWelcomeContent();
@@ -1828,6 +1839,31 @@
                     elements.notificationCenter.classList.remove('active');
                 }
             });
+
+            // Add beforeunload event to save data when page is about to be closed
+            window.addEventListener('beforeunload', () => {
+                if (state.dataLoaded) {
+                    saveData();
+                }
+            });
+
+            // Add visibility change event to save data when app is backgrounded
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && state.dataLoaded) {
+                    saveData();
+                }
+            });
+        }
+
+        // Setup data persistence
+        function setupDataPersistence() {
+            // Auto-save data every 30 seconds if there are changes
+            setInterval(() => {
+                if (state.dataLoaded && state.pendingSave) {
+                    saveData();
+                    state.pendingSave = false;
+                }
+            }, 30000);
         }
 
         // Authentication functions
@@ -1897,14 +1933,20 @@
             const name = elements.signUpName.value;
             const email = elements.signUpEmail.value;
             const password = elements.signUpPassword.value;
+            const confirmPassword = elements.signUpConfirmPassword.value;
             
-            if (!name || !email || !password) {
+            if (!name || !email || !password || !confirmPassword) {
                 showToast('Please fill in all fields', 'error');
                 return;
             }
             
             if (password.length < 6) {
                 showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match', 'error');
                 return;
             }
             
@@ -1923,7 +1965,8 @@
                     return db.collection('users').doc(user.uid).set({
                         name: name,
                         email: email,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 })
                 .then(() => {
@@ -1935,6 +1978,7 @@
                     elements.signUpName.value = '';
                     elements.signUpEmail.value = '';
                     elements.signUpPassword.value = '';
+                    elements.signUpConfirmPassword.value = '';
                 })
                 .catch((error) => {
                     showToast(error.message, 'error');
@@ -2621,6 +2665,10 @@
 
         // Data management
         function saveData() {
+            if (!state.dataLoaded) return;
+            
+            state.pendingSave = true;
+            
             if (state.currentUser) {
                 // Save to Firebase
                 const userData = {
@@ -2634,11 +2682,13 @@
                 db.collection('users').doc(state.currentUser.uid).set(userData, { merge: true })
                     .then(() => {
                         console.log('Data saved to Firebase');
+                        state.pendingSave = false;
                     })
                     .catch((error) => {
                         console.error('Error saving data to Firebase: ', error);
                         // Fallback to localStorage
                         localStorage.setItem(`debtFreeCompassData_${state.currentUser.uid}`, JSON.stringify(userData));
+                        state.pendingSave = false;
                     });
             } else {
                 // Save to localStorage for demo
@@ -2650,11 +2700,15 @@
                     lastUpdated: new Date().toISOString()
                 };
                 localStorage.setItem('debtFreeCompassDemoData', JSON.stringify(userData));
+                state.pendingSave = false;
             }
         }
 
         function loadUserData() {
-            if (!state.currentUser) return;
+            if (!state.currentUser) {
+                loadFromLocalStorage();
+                return;
+            }
             
             // Load from Firebase
             db.collection('users').doc(state.currentUser.uid).get()
@@ -2670,6 +2724,7 @@
                         loadFromLocalStorage();
                     }
                     
+                    state.dataLoaded = true;
                     renderLoans();
                     updateDashboard();
                     updatePayments();
@@ -2691,12 +2746,34 @@
             }
             
             if (savedData) {
-                const data = JSON.parse(savedData);
-                state.loans = data.loans || [];
-                state.payments = data.payments || [];
-                state.goals = data.goals || [];
-                state.achievements = data.achievements || [];
+                try {
+                    const data = JSON.parse(savedData);
+                    state.loans = data.loans || [];
+                    state.payments = data.payments || [];
+                    state.goals = data.goals || [];
+                    state.achievements = data.achievements || [];
+                } catch (e) {
+                    console.error('Error parsing saved data:', e);
+                    // Initialize with empty arrays if parsing fails
+                    state.loans = [];
+                    state.payments = [];
+                    state.goals = [];
+                    state.achievements = [];
+                }
+            } else {
+                // Initialize with empty arrays if no saved data
+                state.loans = [];
+                state.payments = [];
+                state.goals = [];
+                state.achievements = [];
             }
+            
+            state.dataLoaded = true;
+            renderLoans();
+            updateDashboard();
+            updatePayments();
+            renderGoals();
+            updateProfile();
         }
 
         function exportUserData() {
@@ -2892,7 +2969,7 @@
                 showToast('You are back online!', 'success');
                 
                 // Sync data if user is logged in
-                if (state.currentUser) {
+                if (state.currentUser && state.dataLoaded) {
                     saveData();
                 }
             });
